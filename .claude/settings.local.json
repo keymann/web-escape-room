@@ -12,7 +12,8 @@
       "Bash(curl -s -o /dev/null -w \"data.js: %{http_code}\\\\n\" http://127.0.0.1:8765/js/data.js)",
       "Bash(kill 67220)",
       "Bash(awk '{print $2}')",
-      "Bash(xargs -r kill)"
+      "Bash(xargs -r kill)",
+      "Bash(pkill -f \"http.server 8765\")"
     ]
   }
 }

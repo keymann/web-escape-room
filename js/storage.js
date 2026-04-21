@@ -1,63 +1,78 @@
 (function (global) {
   "use strict";
 
-  const KEY_RANKING = "escape_ranking_v1";
+  const KEY_PENDING = "escape_pending_v1";
   const KEY_LAST_GAME = "escape_last_game_v1";
   const KEY_LAST_NAME = "escape_last_name_v1";
-  const MAX_ENTRIES_PER_DIFF = 50;
 
-  function safeParse(raw, fallback) {
-    if (!raw) return fallback;
+  function read(key, fallback) {
     try {
-      return JSON.parse(raw);
+      const v = localStorage.getItem(key);
+      if (!v) return fallback;
+      return JSON.parse(v);
     } catch (_) {
       return fallback;
     }
   }
-
-  function readRankings() {
-    return safeParse(localStorage.getItem(KEY_RANKING), {});
-  }
-
-  function writeRankings(all) {
+  function write(key, val) {
     try {
-      localStorage.setItem(KEY_RANKING, JSON.stringify(all));
+      localStorage.setItem(key, JSON.stringify(val));
     } catch (_) {}
   }
 
-  function getRankings(difficultyId) {
-    const all = readRankings();
-    return Array.isArray(all[difficultyId]) ? all[difficultyId] : [];
+  function getPending(difficultyId) {
+    const all = read(KEY_PENDING, {});
+    const list = all && all[difficultyId];
+    return Array.isArray(list) ? list : [];
   }
 
-  // Returns the 1-based position of the inserted entry, or -1 if not placed.
-  function saveRanking(difficultyId, entry) {
-    const all = readRankings();
-    const list = Array.isArray(all[difficultyId]) ? all[difficultyId] : [];
+  function getAllPending() {
+    const all = read(KEY_PENDING, {}) || {};
+    const out = [];
+    Object.keys(all).forEach(function (k) {
+      if (Array.isArray(all[k])) {
+        all[k].forEach(function (e) {
+          out.push(e);
+        });
+      }
+    });
+    return out;
+  }
+
+  function addPending(entry) {
+    if (!entry || !entry.id || !entry.difficulty) return;
+    const all = read(KEY_PENDING, {}) || {};
+    const list = Array.isArray(all[entry.difficulty])
+      ? all[entry.difficulty]
+      : [];
     list.push(entry);
-    list.sort(function (a, b) {
-      return a.timeMs - b.timeMs;
+    all[entry.difficulty] = list;
+    write(KEY_PENDING, all);
+  }
+
+  function removePending(entryId) {
+    const all = read(KEY_PENDING, {}) || {};
+    let changed = false;
+    Object.keys(all).forEach(function (k) {
+      if (!Array.isArray(all[k])) return;
+      const before = all[k].length;
+      all[k] = all[k].filter(function (e) {
+        return e.id !== entryId;
+      });
+      if (all[k].length !== before) changed = true;
     });
-    const trimmed = list.slice(0, MAX_ENTRIES_PER_DIFF);
-    all[difficultyId] = trimmed;
-    writeRankings(all);
-    const pos = trimmed.findIndex(function (e) {
-      return e.id === entry.id;
-    });
-    return pos === -1 ? -1 : pos + 1;
+    if (changed) write(KEY_PENDING, all);
   }
 
   function getLastGameId(difficultyId) {
-    const raw = safeParse(localStorage.getItem(KEY_LAST_GAME), {});
-    return raw[difficultyId] || null;
+    const r = read(KEY_LAST_GAME, {}) || {};
+    return r[difficultyId] || null;
   }
 
   function setLastGameId(difficultyId, gameId) {
-    const raw = safeParse(localStorage.getItem(KEY_LAST_GAME), {}) || {};
-    raw[difficultyId] = gameId;
-    try {
-      localStorage.setItem(KEY_LAST_GAME, JSON.stringify(raw));
-    } catch (_) {}
+    const r = read(KEY_LAST_GAME, {}) || {};
+    r[difficultyId] = gameId;
+    write(KEY_LAST_GAME, r);
   }
 
   function getLastName() {
@@ -75,8 +90,10 @@
   }
 
   global.ESCAPE_STORE = {
-    getRankings,
-    saveRanking,
+    getPending,
+    getAllPending,
+    addPending,
+    removePending,
     getLastGameId,
     setLastGameId,
     getLastName,

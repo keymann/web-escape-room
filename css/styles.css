@@ -1271,3 +1271,54 @@ body {
     width: 54px;
   }
 }
+
+/* ============================================================ */
+/*  Network states: spinner, pending, errors                     */
+/* ============================================================ */
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(212, 168, 74, 0.25);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  vertical-align: -2px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.result-rank-loading {
+  color: var(--cream-soft);
+  font-style: italic;
+}
+
+.result-rank-pending {
+  border-color: rgba(193, 75, 75, 0.35);
+  background: rgba(193, 75, 75, 0.08);
+  color: var(--cream-soft);
+}
+
+.result-rank-pending .result-rank-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.rank-table tr.pending td {
+  background: rgba(193, 75, 75, 0.06);
+  color: var(--cream-soft);
+}
+
+.chip-pending {
+  color: #e9a1a1;
+  border-color: rgba(193, 75, 75, 0.45);
+  background: rgba(193, 75, 75, 0.12);
+  font-size: 11px;
+  padding: 2px 8px;
+}

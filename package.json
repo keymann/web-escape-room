@@ -1,0 +1,9 @@
+{
+  "name": "web-escape-room",
+  "version": "1.0.0",
+  "private": true,
+  "description": "고려~조선 한국사 방탈출 웹앱",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

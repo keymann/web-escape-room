@@ -3,6 +3,7 @@
 
   const DATA = global.ESCAPE_DATA;
   const STORE = global.ESCAPE_STORE;
+  const API = global.ESCAPE_API;
   const MECHANICS = global.ESCAPE_MECHANICS;
   const ROOT = document.getElementById("app");
 
@@ -156,11 +157,12 @@
       "div",
       { class: "btn-row" },
       diffs.map(function (d) {
-        const list = STORE.getRankings(d.id);
+        const pending = STORE.getPending(d.id).length;
         return h("button", {
           class: "btn",
           type: "button",
-          text: d.name + " 랭킹 (" + list.length + ")",
+          text:
+            d.name + " 랭킹" + (pending > 0 ? " (대기 " + pending + ")" : ""),
           onclick: function () {
             renderRanking(d.id);
           },
@@ -184,7 +186,8 @@
           h("h2", { text: "명예의 전당" }),
           h("p", {
             class: "lead",
-            text: "모든 관문을 통과한 완주 기록이 이 기기에 남습니다.",
+            text:
+              "완주 기록은 모든 플레이어가 공유하는 글로벌 랭킹에 오릅니다. 연결이 끊어진 경우 기록은 이 기기에 잠시 대기했다가 복구 시 자동 전송됩니다.",
           }),
           rankRow,
         ]),
@@ -534,13 +537,76 @@
       difficulty: s.difficulty.id,
       at: new Date().toISOString(),
     };
-    const rank = STORE.saveRanking(s.difficulty.id, entry);
-    renderResult(entry, rank);
     game = null;
+    renderResult(entry, { state: "submitting" });
+
+    API.submitRanking({
+      difficulty: entry.difficulty,
+      gameId: entry.gameId,
+      gameTitle: entry.gameTitle,
+      name: entry.name,
+      timeMs: entry.timeMs,
+      hintsUsed: entry.hintsUsed,
+      wrongCount: entry.wrongCount,
+    }).then(
+      function (resp) {
+        const serverEntry = (resp && resp.entry) || entry;
+        renderResult(serverEntry, {
+          state: "submitted",
+          rank: resp && resp.rank,
+        });
+      },
+      function (err) {
+        STORE.addPending(entry);
+        renderResult(entry, {
+          state: "pending",
+          error: (err && err.message) || "네트워크 오류",
+        });
+      },
+    );
   }
 
   // ---------- Screen: Result ----------
-  function renderResult(entry, rank) {
+  function renderResult(entry, meta) {
+    meta = meta || { state: "submitted" };
+    let statusEl;
+    if (meta.state === "submitting") {
+      statusEl = h("div", { class: "result-rank result-rank-loading" }, [
+        h("span", { class: "spinner", "aria-hidden": "true" }),
+        document.createTextNode(" 글로벌 랭킹에 기록을 올리는 중…"),
+      ]);
+    } else if (meta.state === "submitted") {
+      statusEl = h(
+        "div",
+        { class: "result-rank" },
+        meta.rank > 0
+          ? [
+              document.createTextNode("현재 "),
+              h("strong", {
+                text: DATA.DIFFICULTY[entry.difficulty].name,
+              }),
+              document.createTextNode(" 글로벌 "),
+              h("strong", { text: meta.rank + "위" }),
+              document.createTextNode(" 에 올랐습니다."),
+            ]
+          : [document.createTextNode("기록되었지만 상위에 오르지 못했습니다.")],
+      );
+    } else {
+      // pending
+      statusEl = h("div", { class: "result-rank result-rank-pending" }, [
+        h("div", {
+          text:
+            "지금은 기록을 올릴 수 없어 이 기기에 대기열로 저장했습니다. 다음 접속 때 자동 전송됩니다.",
+        }),
+        meta.error
+          ? h("div", {
+              class: "result-rank-hint",
+              text: "(원인: " + meta.error + ")",
+            })
+          : null,
+      ]);
+    }
+
     const hero = h("section", { class: "panel" }, [
       h("div", { class: "result-hero" }, [
         h("div", { class: "badge", text: "CLEAR" }),
@@ -559,29 +625,19 @@
             entry.wrongCount +
             "회",
         }),
-        h(
-          "div",
-          { class: "result-rank" },
-          rank > 0
-            ? [
-                document.createTextNode("현재 "),
-                h("strong", {
-                  text: DATA.DIFFICULTY[entry.difficulty].name,
-                }),
-                document.createTextNode(" 난이도 "),
-                h("strong", { text: rank + "위" }),
-                document.createTextNode(" 에 올랐습니다."),
-              ]
-            : [document.createTextNode("기록되지 못했습니다.")],
-        ),
+        statusEl,
       ]),
       h("div", { class: "btn-row" }, [
         h("button", {
           class: "btn btn-primary",
           type: "button",
           text: "랭킹 보기",
+          disabled: meta.state === "submitting",
           onclick: function () {
-            renderRanking(entry.difficulty, entry.id);
+            renderRanking(
+              entry.difficulty,
+              meta.state === "submitted" ? entry.id : null,
+            );
           },
         }),
         h("button", {
@@ -607,7 +663,6 @@
   // ---------- Screen: Ranking ----------
   function renderRanking(difficultyId, highlightId) {
     const diff = DATA.DIFFICULTY[difficultyId];
-    const list = STORE.getRankings(difficultyId);
 
     const tabs = h(
       "div",
@@ -626,43 +681,8 @@
       }),
     );
 
-    let body;
-    if (list.length === 0) {
-      body = h("div", {
-        class: "empty",
-        text: "아직 기록이 없습니다. 첫 주인공이 되어 보세요.",
-      });
-    } else {
-      const rows = list.map(function (e, i) {
-        return h(
-          "tr",
-          { class: highlightId && e.id === highlightId ? "me" : "" },
-          [
-            h("td", { class: "rank-pos", text: i + 1 }),
-            h("td", { text: e.name }),
-            h("td", { class: "rank-time", text: formatTime(e.timeMs) }),
-            h("td", { text: e.gameTitle }),
-            h("td", {
-              text: "힌트 " + e.hintsUsed + " · 오답 " + e.wrongCount,
-            }),
-          ],
-        );
-      });
-      body = h("div", { class: "table-wrap" }, [
-        h("table", { class: "rank-table" }, [
-          h("thead", {}, [
-            h("tr", {}, [
-              h("th", { text: "#" }),
-              h("th", { text: "이름" }),
-              h("th", { text: "시간" }),
-              h("th", { text: "방" }),
-              h("th", { text: "비고" }),
-            ]),
-          ]),
-          h("tbody", {}, rows),
-        ]),
-      ]);
-    }
+    const bodyHolder = h("div", {});
+    const footerRow = h("div", { class: "btn-row", style: "margin-top:16px;" });
 
     const canPlay =
       !diff.comingSoon &&
@@ -671,14 +691,19 @@
       });
 
     const panel = h("section", { class: "panel" }, [
-      h("h2", { text: diff.name + " 랭킹" }),
+      h("h2", { text: diff.name + " 글로벌 랭킹" }),
       h("p", {
         class: "lead",
-        text: "완주 시간이 짧은 순으로 정렬됩니다.",
+        text: "모든 플레이어의 완주 시간이 합산됩니다. 짧은 순으로 정렬.",
       }),
       tabs,
-      body,
-      h("div", { class: "btn-row", style: "margin-top:16px;" }, [
+      bodyHolder,
+      footerRow,
+    ]);
+
+    function defaultFooter() {
+      footerRow.innerHTML = "";
+      footerRow.appendChild(
         h("button", {
           class: "btn btn-primary",
           type: "button",
@@ -692,37 +717,161 @@
             goName(difficultyId);
           },
         }),
+      );
+      footerRow.appendChild(
         h("button", {
           class: "btn",
           type: "button",
           text: "처음 화면",
           onclick: renderSelect,
         }),
-        list.length > 0 &&
-          h("button", {
-            class: "btn btn-danger",
-            type: "button",
-            text: "이 난이도 기록 초기화",
-            onclick: function () {
-              if (
-                confirm(diff.name + " 난이도의 모든 기록을 삭제할까요?")
-              ) {
-                const all = JSON.parse(
-                  localStorage.getItem("escape_ranking_v1") || "{}",
-                );
-                all[difficultyId] = [];
-                localStorage.setItem(
-                  "escape_ranking_v1",
-                  JSON.stringify(all),
-                );
-                renderRanking(difficultyId);
-              }
-            },
+      );
+    }
+
+    function showLoading() {
+      bodyHolder.innerHTML = "";
+      bodyHolder.appendChild(
+        h("div", { class: "empty" }, [
+          h("span", { class: "spinner", "aria-hidden": "true" }),
+          document.createTextNode(" 서버에서 랭킹을 불러오는 중…"),
+        ]),
+      );
+    }
+
+    function showError(msg) {
+      bodyHolder.innerHTML = "";
+      bodyHolder.appendChild(
+        h("div", { class: "empty" }, [
+          h("div", {
+            text: "랭킹을 불러오지 못했습니다.",
+            style: "color:var(--red);font-weight:600;",
           }),
-      ]),
-    ]);
+          h("div", {
+            text: msg || "",
+            style: "font-size:12px;color:var(--muted);margin-top:6px;",
+          }),
+          h("div", { style: "margin-top:14px;" }, [
+            h("button", {
+              class: "btn",
+              type: "button",
+              text: "다시 시도",
+              onclick: load,
+            }),
+          ]),
+        ]),
+      );
+    }
+
+    function renderList(serverList) {
+      const pending = STORE.getPending(difficultyId);
+      bodyHolder.innerHTML = "";
+
+      if (serverList.length === 0 && pending.length === 0) {
+        bodyHolder.appendChild(
+          h("div", {
+            class: "empty",
+            text: "아직 기록이 없습니다. 첫 주인공이 되어 보세요.",
+          }),
+        );
+        return;
+      }
+
+      // Interleave pending entries in order; mark pending with a badge
+      const combined = serverList.map(function (e) {
+        return { e: e, pending: false };
+      });
+      pending.forEach(function (pe) {
+        // avoid dup if already made it to server (match by name + time +- 2s)
+        const dup = serverList.find(function (s) {
+          return (
+            s.name === pe.name && Math.abs(s.timeMs - pe.timeMs) < 2000
+          );
+        });
+        if (!dup) combined.push({ e: pe, pending: true });
+      });
+      combined.sort(function (a, b) {
+        return a.e.timeMs - b.e.timeMs;
+      });
+
+      const rows = combined.map(function (row, i) {
+        const e = row.e;
+        const classes = [];
+        if (highlightId && e.id === highlightId) classes.push("me");
+        if (row.pending) classes.push("pending");
+        return h("tr", { class: classes.join(" ") || null }, [
+          h("td", { class: "rank-pos", text: row.pending ? "—" : i + 1 }),
+          h("td", {}, [
+            document.createTextNode(e.name),
+            row.pending
+              ? h("span", {
+                  class: "chip chip-pending",
+                  text: "대기 중",
+                  style: "margin-left:8px;",
+                })
+              : null,
+          ]),
+          h("td", { class: "rank-time", text: formatTime(e.timeMs) }),
+          h("td", { text: e.gameTitle }),
+          h("td", {
+            text: "힌트 " + e.hintsUsed + " · 오답 " + e.wrongCount,
+          }),
+        ]);
+      });
+
+      bodyHolder.appendChild(
+        h("div", { class: "table-wrap" }, [
+          h("table", { class: "rank-table" }, [
+            h("thead", {}, [
+              h("tr", {}, [
+                h("th", { text: "#" }),
+                h("th", { text: "이름" }),
+                h("th", { text: "시간" }),
+                h("th", { text: "방" }),
+                h("th", { text: "비고" }),
+              ]),
+            ]),
+            h("tbody", {}, rows),
+          ]),
+        ]),
+      );
+
+      if (pending.length > 0) {
+        const retry = h("button", {
+          class: "btn btn-ghost",
+          type: "button",
+          text: "대기 기록 전송 재시도 (" + pending.length + ")",
+          onclick: function () {
+            flushPending(difficultyId).then(function () {
+              load();
+            });
+          },
+        });
+        bodyHolder.appendChild(
+          h("div", { style: "margin-top:12px;text-align:right;" }, [retry]),
+        );
+      }
+    }
+
+    function load() {
+      showLoading();
+      defaultFooter();
+      API.fetchRankings(difficultyId).then(
+        function (list) {
+          renderList(list);
+        },
+        function (err) {
+          const fallback = STORE.getPending(difficultyId);
+          if (fallback.length > 0) {
+            renderList([]);
+          } else {
+            showError((err && err.message) || "서버에 접근할 수 없습니다.");
+          }
+        },
+      );
+    }
 
     mount(h("div", { class: "screen" }, [brandBlock("명예의 전당"), panel]));
+    load();
   }
 
   // ---------- Quit confirm ----------
@@ -759,9 +908,43 @@
     document.body.appendChild(backdrop);
   }
 
+  // ---------- Flush pending on boot ----------
+  function flushPending(onlyDifficulty) {
+    const all = STORE.getAllPending().filter(function (e) {
+      return !onlyDifficulty || e.difficulty === onlyDifficulty;
+    });
+    if (all.length === 0) return Promise.resolve();
+    return all.reduce(function (p, e) {
+      return p.then(function () {
+        return API.submitRanking({
+          difficulty: e.difficulty,
+          gameId: e.gameId,
+          gameTitle: e.gameTitle,
+          name: e.name,
+          timeMs: e.timeMs,
+          hintsUsed: e.hintsUsed,
+          wrongCount: e.wrongCount,
+        }).then(
+          function () {
+            STORE.removePending(e.id);
+          },
+          function () {
+            /* keep in queue */
+          },
+        );
+      });
+    }, Promise.resolve());
+  }
+
   // ---------- Boot ----------
-  document.addEventListener("DOMContentLoaded", function () {
+  function boot() {
     renderSelect();
-  });
-  if (document.readyState !== "loading") renderSelect();
+    // flush silently in background
+    setTimeout(function () {
+      flushPending().catch(function () {});
+    }, 600);
+  }
+
+  document.addEventListener("DOMContentLoaded", boot);
+  if (document.readyState !== "loading") boot();
 })(window);
