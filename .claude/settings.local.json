@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -c js/data.js)",
+      "Bash(node -c js/storage.js)",
+      "Bash(node -c js/app.js)",
+      "Bash(node *)",
+      "Bash(python3 -m http.server 8765)",
+      "Bash(echo \"server pid: $!\")",
+      "Bash(curl -s -o /dev/null -w \"index.html: %{http_code}\\\\n\" http://127.0.0.1:8765/)",
+      "Bash(curl -s -o /dev/null -w \"styles.css: %{http_code}\\\\n\" http://127.0.0.1:8765/css/styles.css)",
+      "Bash(curl -s -o /dev/null -w \"data.js: %{http_code}\\\\n\" http://127.0.0.1:8765/js/data.js)",
+      "Bash(kill 67220)",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs -r kill)"
+    ]
+  }
+}
