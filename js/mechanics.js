@@ -179,18 +179,27 @@
   function renderDial(container, stage, api) {
     const cfg = stage.config;
     const digits = cfg.digits;
-    const symbols =
-      typeof cfg.symbols === "string"
-        ? cfg.symbols.split("")
-        : Array.isArray(cfg.symbols) && cfg.symbols.length
-          ? cfg.symbols
-          : "0123456789".split("");
+    function toArr(v) {
+      if (typeof v === "string") return v.split("");
+      if (Array.isArray(v) && v.length) return v.slice();
+      return null;
+    }
+    const fallback = toArr(cfg.symbols) || "0123456789".split("");
+    const perWheel = [];
+    for (let i = 0; i < digits; i++) {
+      const ws =
+        Array.isArray(cfg.wheelSymbols) && cfg.wheelSymbols[i]
+          ? toArr(cfg.wheelSymbols[i])
+          : null;
+      perWheel.push(ws || fallback);
+    }
     const cursor = new Array(digits).fill(0);
     const fb = feedbackBox();
 
     const wheels = [];
     for (let i = 0; i < digits; i++) {
-      const valEl = h("div", { class: "m-dial-val", text: symbols[0] });
+      const syms = perWheel[i];
+      const valEl = h("div", { class: "m-dial-val", text: syms[0] });
       const upBtn = h("button", {
         type: "button",
         class: "m-dial-btn",
@@ -202,15 +211,15 @@
         text: "▼",
       });
       (function (idx) {
+        const s = perWheel[idx];
         upBtn.addEventListener("click", function () {
-          cursor[idx] = (cursor[idx] + 1) % symbols.length;
-          valEl.textContent = symbols[cursor[idx]];
+          cursor[idx] = (cursor[idx] + 1) % s.length;
+          valEl.textContent = s[cursor[idx]];
           info(fb, "");
         });
         dnBtn.addEventListener("click", function () {
-          cursor[idx] =
-            (cursor[idx] - 1 + symbols.length) % symbols.length;
-          valEl.textContent = symbols[cursor[idx]];
+          cursor[idx] = (cursor[idx] - 1 + s.length) % s.length;
+          valEl.textContent = s[cursor[idx]];
           info(fb, "");
         });
       })(i);
@@ -225,9 +234,11 @@
       class: "btn btn-primary btn-block",
       text: "🔓 잠금 해제",
       onclick: function () {
-        const entered = cursor.map(function (c) {
-          return symbols[c];
-        }).join("");
+        const entered = cursor
+          .map(function (c, i) {
+            return perWheel[i][c];
+          })
+          .join("");
         if (entered === sol) {
           ok(fb, "자물쇠가 풀립니다.");
           api.onSolve();

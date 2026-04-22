@@ -15,33 +15,23 @@
       subtitle: "서생의 방",
       desc: "사건의 흐름과 연대, 문화사를 아우르는 중급 난이도.",
       hintsPerRun: 6,
-      comingSoon: true,
     },
     hard: {
       id: "hard",
       name: "어려움",
       subtitle: "사관의 방",
-      desc: "심화 역사 지식과 복합 추론. 진짜 고수를 위한 방.",
+      desc: "한자·간지·사료 해독과 복합 추론. 진짜 고수를 위한 방.",
       hintsPerRun: 4,
-      comingSoon: true,
     },
   };
 
-  // --------------------------------------------------------------------
-  // Stage schema
-  //   mechanic: 'select' | 'keypad' | 'dial' | 'sequence' | 'match' |
-  //             'arrange' | 'hotspot' | 'combine'
-  //   type: 'history' | 'common' | 'math' | 'nonsense'
-  //   title: 단계 타이틀
-  //   scene: { text?: string, items?: [{icon, label, note?}] }
-  //   prompt: 추론 안내 한 줄
-  //   config: 메커닉별 옵션
-  //   solution: 메커닉별 정답 (문자열 / 배열 / 객체)
-  //   hints: [관찰힌트, 추론힌트, 조작힌트]
-  // --------------------------------------------------------------------
+  const GAN = "甲乙丙丁戊己庚辛壬癸";
+  const JI = "子丑寅卯辰巳午未申酉戌亥";
 
+  // =========================================================================
+  //  EASY · 고려의 길 (기존)
+  // =========================================================================
   const GOYEO_STAGES = [
-    // 1 ── select
     {
       mechanic: "select",
       type: "history",
@@ -66,8 +56,6 @@
         "정답은 ‘왕건’.",
       ],
     },
-
-    // 2 ── hotspot (remove intruders)
     {
       mechanic: "hotspot",
       type: "common",
@@ -97,8 +85,6 @@
         "훈민정음 언해본 · 거북선 · 동의보감 · 수원화성 설계도.",
       ],
     },
-
-    // 3 ── dial (연호)
     {
       mechanic: "dial",
       type: "history",
@@ -120,8 +106,6 @@
         "0-9-1-8.",
       ],
     },
-
-    // 4 ── keypad (1 digit)
     {
       mechanic: "keypad",
       type: "history",
@@ -137,14 +121,8 @@
       prompt: "서희가 얻어낸 ‘강동 ○주’, 그 숫자는?",
       config: { length: 1 },
       solution: "6",
-      hints: [
-        "한 자리 숫자.",
-        "4보다 크고 8보다 작다.",
-        "정답은 6.",
-      ],
+      hints: ["한 자리 숫자.", "4보다 크고 8보다 작다.", "정답은 6."],
     },
-
-    // 5 ── combine (비석)
     {
       mechanic: "combine",
       type: "history",
@@ -164,24 +142,12 @@
           { id: "gol", icon: "🪨", label: "조각 “골”" },
         ],
         recipes: [
-          {
-            a: "gwi",
-            b: "ju",
-            result: { id: "gwiju", icon: "📜", label: "반쪽 “귀주”" },
-          },
-          {
-            a: "dae",
-            b: "chup",
-            result: { id: "daechup", icon: "📜", label: "반쪽 “대첩”" },
-          },
+          { a: "gwi", b: "ju", result: { id: "gwiju", icon: "📜", label: "반쪽 “귀주”" } },
+          { a: "dae", b: "chup", result: { id: "daechup", icon: "📜", label: "반쪽 “대첩”" } },
           {
             a: "gwiju",
             b: "daechup",
-            result: {
-              id: "gwiju-daechup",
-              icon: "🏛",
-              label: "복원된 “귀주대첩” 승전비",
-            },
+            result: { id: "gwiju-daechup", icon: "🏛", label: "복원된 “귀주대첩” 승전비" },
           },
         ],
         goal: "gwiju-daechup",
@@ -193,8 +159,6 @@
         "귀주 + 대첩 = 귀주대첩.",
       ],
     },
-
-    // 6 ── select (청자)
     {
       mechanic: "select",
       type: "common",
@@ -206,26 +170,10 @@
       prompt: "‘상감’ 기법이 쓰인 청자를 골라라.",
       config: {
         options: [
-          {
-            id: "a",
-            label: "표면을 파내 다른 색 흙을 메운 청자",
-            detail: "음각 자리에 백토·자토를 메움",
-          },
-          {
-            id: "b",
-            label: "유약만 덮어 매끈한 비취색 청자",
-            detail: "무늬 없음 (순청자)",
-          },
-          {
-            id: "c",
-            label: "회청색 바탕에 붓으로 무늬를 그린 도자기",
-            detail: "분청사기",
-          },
-          {
-            id: "d",
-            label: "흰 바탕에 푸른 그림을 넣은 도자기",
-            detail: "청화백자",
-          },
+          { id: "a", label: "표면을 파내 다른 색 흙을 메운 청자", detail: "음각 자리에 백토·자토를 메움" },
+          { id: "b", label: "유약만 덮어 매끈한 비취색 청자", detail: "무늬 없음 (순청자)" },
+          { id: "c", label: "회청색 바탕에 붓으로 무늬를 그린 도자기", detail: "분청사기" },
+          { id: "d", label: "흰 바탕에 푸른 그림을 넣은 도자기", detail: "청화백자" },
         ],
       },
       solution: "a",
@@ -235,15 +183,12 @@
         "첫 번째가 상감청자.",
       ],
     },
-
-    // 7 ── sequence (삼별초)
     {
       mechanic: "sequence",
       type: "history",
       title: "삼별초의 길",
       scene: {
-        text:
-          "몽골에 끝까지 맞선 삼별초는 네 곳을 차례로 옮겨 다니며 저항했다. 벽면 지도에 네 지명이 흩어져 있다.",
+        text: "몽골에 끝까지 맞선 삼별초는 네 곳을 차례로 옮겨 다니며 저항했다. 벽면 지도에 네 지명이 흩어져 있다.",
       },
       prompt: "삼별초의 근거지 이동 순서대로 지명을 눌러라.",
       config: {
@@ -261,15 +206,12 @@
         "개경 → 강화도 → 진도 → 제주도.",
       ],
     },
-
-    // 8 ── keypad (팔만)
     {
       mechanic: "keypad",
       type: "math",
       title: "장경판의 수",
       scene: {
-        text:
-          "해인사 장경판전. 가지런히 쌓인 목판이 끝도 없이 이어진다. 현판엔 ‘팔만대장경’이라 적혔다.",
+        text: "해인사 장경판전. 가지런히 쌓인 목판이 끝도 없이 이어진다. 현판엔 ‘팔만대장경’이라 적혔다.",
         items: [
           { icon: "🏛", label: "장경판전", note: "유네스코 세계유산" },
           { icon: "🧮", label: "‘팔만’ 표시", note: "‘만’ = 10,000" },
@@ -278,22 +220,13 @@
       prompt: "‘팔만’을 아라비아 숫자 5자리로 입력하라.",
       config: { length: 5 },
       solution: "80000",
-      hints: [
-        "‘만’은 10,000.",
-        "8 × 10,000 .",
-        "80000.",
-      ],
+      hints: ["‘만’은 10,000.", "8 × 10,000 .", "80000."],
     },
-
-    // 9 ── match (인물-업적)
     {
       mechanic: "match",
       type: "history",
       title: "인물과 업적",
-      scene: {
-        text:
-          "낡은 벽화 속에 네 인물과 네 업적이 흩어져 있다. 짝을 맞추어야 벽이 열린다.",
-      },
+      scene: { text: "낡은 벽화 속에 네 인물과 네 업적이 흩어져 있다. 짝을 맞추어야 벽이 열린다." },
       prompt: "왼쪽 인물과 오른쪽 업적을 바르게 이어라.",
       config: {
         left: [
@@ -317,15 +250,12 @@
         "정도전은 조선의 설계자다.",
       ],
     },
-
-    // 10 ── combine (직지)
     {
       mechanic: "combine",
       type: "history",
       title: "직지의 복원",
       scene: {
-        text:
-          "청주 흥덕사. 세계에서 가장 오래된 금속활자 인쇄본의 책 이름이 조각나 흩어져 있다.",
+        text: "청주 흥덕사. 세계에서 가장 오래된 금속활자 인쇄본의 책 이름이 조각나 흩어져 있다.",
       },
       prompt: "조각을 결합해 책의 ‘줄인 정식 이름’(여섯 글자)을 완성하라.",
       config: {
@@ -337,20 +267,8 @@
           { id: "choerok", icon: "📄", label: "조각 “초록”" },
         ],
         recipes: [
-          {
-            a: "jikji",
-            b: "simche",
-            result: { id: "js", icon: "📘", label: "“직지심체”" },
-          },
-          {
-            a: "js",
-            b: "yojul",
-            result: {
-              id: "jsyj",
-              icon: "📚",
-              label: "완성된 “직지심체요절”",
-            },
-          },
+          { a: "jikji", b: "simche", result: { id: "js", icon: "📘", label: "“직지심체”" } },
+          { a: "js", b: "yojul", result: { id: "jsyj", icon: "📚", label: "완성된 “직지심체요절”" } },
         ],
         goal: "jsyj",
       },
@@ -361,15 +279,12 @@
         "직지+심체 → 직지심체 + 요절.",
       ],
     },
-
-    // 11 ── select (북방)
     {
       mechanic: "select",
       type: "history",
       title: "북방의 장군",
       scene: {
-        text:
-          "두만강 너머 북쪽. ‘별무반’이라는 특수 부대를 조직해 여진을 정벌하고 동북 9성을 쌓은 장군의 이름이 새겨진 비석을 찾아라.",
+        text: "두만강 너머 북쪽. ‘별무반’이라는 특수 부대를 조직해 여진을 정벌하고 동북 9성을 쌓은 장군의 이름이 새겨진 비석을 찾아라.",
       },
       prompt: "여진을 정벌하고 동북 9성을 쌓은 고려의 장군은?",
       config: {
@@ -381,21 +296,14 @@
         ],
       },
       solution: "yun",
-      hints: [
-        "이 장군은 ‘별무반’을 만들었다.",
-        "이름은 두 글자, ‘ㅇ’으로 시작한다.",
-        "윤관.",
-      ],
+      hints: ["이 장군은 ‘별무반’을 만들었다.", "이름은 두 글자, ‘ㅇ’으로 시작한다.", "윤관."],
     },
-
-    // 12 ── select (광종)
     {
       mechanic: "select",
       type: "history",
       title: "개혁의 왕",
       scene: {
-        text:
-          "고려 초, 한 왕이 억울하게 노비가 된 자를 풀어 주었고, 시험으로 관리를 뽑는 제도를 처음 도입해 왕권을 세웠다.",
+        text: "고려 초, 한 왕이 억울하게 노비가 된 자를 풀어 주었고, 시험으로 관리를 뽑는 제도를 처음 도입해 왕권을 세웠다.",
       },
       prompt: "노비안검법과 과거 제도를 시행한 고려의 왕은?",
       config: {
@@ -407,41 +315,25 @@
         ],
       },
       solution: "g",
-      hints: [
-        "태조의 손자 세대의 왕이다.",
-        "‘빛 광(光)’ 자를 쓴다.",
-        "광종.",
-      ],
+      hints: ["태조의 손자 세대의 왕이다.", "‘빛 광(光)’ 자를 쓴다.", "광종."],
     },
-
-    // 13 ── dial (몽골)
     {
       mechanic: "dial",
       type: "history",
       title: "몽골의 말발굽",
       scene: {
-        text:
-          "13세기 초, 북방에서 거대한 말발굽 소리가 밀려왔다. 몽골군이 고려 땅을 처음 밟은 해를 맞추어야 다음 방의 문이 열린다.",
+        text: "13세기 초, 북방에서 거대한 말발굽 소리가 밀려왔다. 몽골군이 고려 땅을 처음 밟은 해를 맞추어야 다음 방의 문이 열린다.",
       },
       prompt: "몽골의 1차 침입 연도를 4자리로 맞추어라.",
       config: { digits: 4, symbols: "0123456789" },
       solution: "1231",
-      hints: [
-        "1200년대 초반의 일이다.",
-        "각 자리 숫자의 합은 7이다.",
-        "1-2-3-1.",
-      ],
+      hints: ["1200년대 초반의 일이다.", "각 자리 숫자의 합은 7이다.", "1-2-3-1."],
     },
-
-    // 14 ── sequence (왕 순서)
     {
       mechanic: "sequence",
       type: "common",
       title: "왕의 순서",
-      scene: {
-        text:
-          "제사를 위한 네 개의 위패가 제단 위에 놓여 있다. 왕위에 오른 순서대로 짚어야 위패가 제 자리를 찾는다.",
-      },
+      scene: { text: "제단 위 네 위패. 왕위에 오른 순서대로 짚어야 제 자리를 찾는다." },
       prompt: "고려 초기 네 왕을 즉위 순서대로 클릭하라.",
       config: {
         items: [
@@ -452,21 +344,15 @@
         ],
       },
       solution: ["t", "h", "j", "g"],
-      hints: [
-        "창업 군주가 맨 앞이다.",
-        "태(조) → 혜(종) → 정(종) → 광(종).",
-        "태조 → 혜종 → 정종 → 광종.",
-      ],
+      hints: ["창업 군주가 맨 앞이다.", "태→혜→정→광.", "태조 → 혜종 → 정종 → 광종."],
     },
-
-    // 15 ── hotspot (왕건 인장, find-one)
     {
       mechanic: "hotspot",
       type: "nonsense",
       title: "왕의 인장",
       scene: {
         text:
-          "비단 보자기 위에 아홉 개의 금인(金印)이 놓여 있다. 글자가 새겨져 있고, 그중 하나가 왕건의 것이다. 힌트: 이름 속에 성(姓)이 숨어 있다.",
+          "비단 보자기 위에 아홉 개의 금인이 놓여 있다. 글자가 새겨져 있고, 그중 하나가 왕건의 것이다. 힌트: 이름 속에 성(姓)이 숨어 있다.",
       },
       prompt: "왕건의 인장을 하나만 골라라.",
       config: {
@@ -485,22 +371,13 @@
         exact: true,
       },
       solution: ["i4"],
-      hints: [
-        "왕건의 성을 한자로 쓰면?",
-        "‘王’ 자 하나를 찾으면 된다.",
-        "네 번째 줄의 ‘王’.",
-      ],
+      hints: ["왕건의 성을 한자로 쓰면?", "‘王’ 자 하나를 찾으면 된다.", "네 번째 인장 ‘王’."],
     },
-
-    // 16 ── combine (상감청자)
     {
       mechanic: "combine",
       type: "common",
       title: "청자의 이름",
-      scene: {
-        text:
-          "장인의 공방에 명패가 조각나 있다. 고려 청자의 대표 기법 이름을 바르게 맞추어라.",
-      },
+      scene: { text: "장인의 공방에 명패가 조각나 있다. 고려 청자의 대표 기법 이름을 바르게 맞추어라." },
       prompt: "두 조각을 결합해 ‘○○청자’ 이름을 완성하라.",
       config: {
         inventory: [
@@ -510,13 +387,7 @@
           { id: "bj", icon: "🧩", label: "조각 “백자”" },
           { id: "ch", icon: "🧩", label: "조각 “청화”" },
         ],
-        recipes: [
-          {
-            a: "sg",
-            b: "cj",
-            result: { id: "sgcj", icon: "🏺", label: "완성된 “상감청자”" },
-          },
-        ],
+        recipes: [{ a: "sg", b: "cj", result: { id: "sgcj", icon: "🏺", label: "완성된 “상감청자”" } }],
         goal: "sgcj",
       },
       solution: "sgcj",
@@ -526,16 +397,11 @@
         "상감 + 청자 = 상감청자.",
       ],
     },
-
-    // 17 ── match (경(京)의 짝)
     {
       mechanic: "match",
       type: "history",
       title: "삼경(三京)의 이름",
-      scene: {
-        text:
-          "고려에는 개경 외에도 ‘경(京)’이라 이름 붙인 도시가 있었다. 옛 이름과 그 위치(현재 도시)를 바르게 이어라.",
-      },
+      scene: { text: "고려에는 개경 외에도 ‘경(京)’이라 이름 붙인 도시가 있었다. 옛 이름과 그 위치(현재 도시)를 바르게 이어라." },
       prompt: "고려의 옛 지명과 실제 도시를 연결하라.",
       config: {
         left: [
@@ -557,16 +423,11 @@
         "서경-평양, 남경-한양, 동경-경주.",
       ],
     },
-
-    // 18 ── arrange (사건 연표)
     {
       mechanic: "arrange",
       type: "history",
       title: "고려 연표",
-      scene: {
-        text:
-          "다섯 개의 사건 패가 흩어져 있다. 연대 순으로 다섯 칸에 배열해야 한다.",
-      },
+      scene: { text: "다섯 개의 사건 패가 흩어져 있다. 연대 순으로 다섯 칸에 배열해야 한다." },
       prompt: "다섯 사건을 일어난 순서대로 슬롯에 배치하라.",
       config: {
         slots: 5,
@@ -585,16 +446,11 @@
         "918 → 993 → 1019 → 1231 → 1392.",
       ],
     },
-
-    // 19 ── arrange (단심가)
     {
       mechanic: "arrange",
       type: "common",
       title: "단심가의 구절",
-      scene: {
-        text:
-          "정몽주가 이방원의 하여가에 답하며 지은 시조 ‘단심가’. 구절이 흐트러진 채 걸려 있다.",
-      },
+      scene: { text: "정몽주가 이방원의 하여가에 답하며 지은 시조 ‘단심가’. 구절이 흐트러진 채 걸려 있다." },
       prompt: "단심가 다섯 구절을 원래 순서대로 배치하라.",
       config: {
         slots: 5,
@@ -613,15 +469,12 @@
         "마지막 구절은 ‘님 향한 일편단심이야’.",
       ],
     },
-
-    // 20 ── keypad (1392)
     {
       mechanic: "keypad",
       type: "history",
       title: "마지막 문",
       scene: {
-        text:
-          "고려의 마지막 문이 눈앞에 있다. 위화도에서 돌아온 이성계가 새 나라를 연 그 해, 고려의 문은 조용히 닫혔다.",
+        text: "고려의 마지막 문이 눈앞에 있다. 위화도에서 돌아온 이성계가 새 나라를 연 그 해, 고려의 문은 조용히 닫혔다.",
         items: [
           { icon: "🚪", label: "마지막 성문", note: "4자리 숫자 잠금" },
           { icon: "🗡", label: "녹슨 칼", note: "위화도의 증거" },
@@ -630,14 +483,2488 @@
       prompt: "고려가 멸망한(조선 건국) 해를 4자리로 입력하라.",
       config: { length: 4 },
       solution: "1392",
+      hints: ["14세기 말이다.", "1 + 3 + 9 + 2 = 15.", "1392."],
+    },
+  ];
+
+  // =========================================================================
+  //  NORMAL · 1. 사화의 시대 (normal-sajo)
+  // =========================================================================
+  const NORMAL_SAJO = [
+    {
+      mechanic: "select",
+      type: "history",
+      title: "사화의 희생자",
+      scene: {
+        text:
+          "15~16세기 조선, 네 번의 ‘사화’가 연달아 몰아쳤다. 조정엔 두 세력이 있었다. 훈구(勳舊)와 사림(士林). 이 폭풍 속에서 희생된 쪽을 먼저 가려야 한다.",
+      },
+      prompt: "사화에서 주로 희생된 세력은?",
+      config: {
+        options: [
+          { id: "s", label: "사림", detail: "지방 신진 사대부" },
+          { id: "h", label: "훈구", detail: "공신 계층" },
+          { id: "y", label: "양반", detail: "지배 계급 통칭" },
+          { id: "j", label: "중인", detail: "실무 기술직" },
+        ],
+      },
+      solution: "s",
       hints: [
-        "14세기 말이다.",
-        "1 + 3 + 9 + 2 = 15.",
-        "1392.",
+        "피해를 본 쪽은 지방에서 올라온 신진 세력.",
+        "훈구의 반대 축.",
+        "정답은 ‘사림’.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "무오사화의 해",
+      scene: {
+        text: "연산군 4년, 사관 김일손의 사초가 문제 삼아져 사림에 최초의 큰 화가 내렸다.",
+      },
+      prompt: "무오사화 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1498",
+      hints: ["15세기 말.", "1490년대.", "1498."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "사초에 실린 글",
+      scene: {
+        text:
+          "무오사화의 불씨는 김종직이 일찍이 지은 한 편의 글이었다. 김일손이 이를 사초에 올린 것이 발각되었다.",
+      },
+      prompt: "무오사화의 빌미가 된 김종직의 글 이름은?",
+      config: {
+        options: [
+          { id: "jo", label: "조의제문", detail: "초나라 의제를 조문하는 글" },
+          { id: "wo", label: "원각경", detail: "불경" },
+          { id: "sam", label: "삼강행실도", detail: "세종 대 간행" },
+          { id: "dm", label: "동문선", detail: "시문집" },
+        ],
+      },
+      solution: "jo",
+      hints: [
+        "세조의 왕위 찬탈을 빗댔다는 해석이 있는 글.",
+        "‘의제를 조문한다’는 뜻.",
+        "‘조의제문’.",
+      ],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "사림과 훈구 가려내기",
+      scene: {
+        text: "공신도에 여덟 인물의 패가 걸려 있다. 사림 계열만 깨끗이 가려내야 다음 문으로 이어진다.",
+      },
+      prompt: "사림 계열 인물을 모두 골라라 (4명).",
+      config: {
+        items: [
+          { id: "a", icon: "📜", label: "김종직", note: "영남사림 종주" },
+          { id: "b", icon: "📜", label: "조광조", note: "기묘명현" },
+          { id: "c", icon: "📜", label: "이이", note: "기호학파" },
+          { id: "d", icon: "📜", label: "이황", note: "영남학파" },
+          { id: "e", icon: "🏛", label: "한명회", note: "정난공신" },
+          { id: "f", icon: "🏛", label: "신숙주", note: "집현전 출신·공신" },
+          { id: "g", icon: "🏛", label: "권람", note: "정난공신" },
+          { id: "h", icon: "🏛", label: "정인지", note: "훈민정음 해례·공신" },
+        ],
+        targets: ["a", "b", "c", "d"],
+      },
+      solution: ["a", "b", "c", "d"],
+      hints: [
+        "사림은 ‘공신’ 명단에 오르지 않은 쪽이다.",
+        "영남·기호 학파 모두 사림.",
+        "김종직·조광조·이이·이황.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "history",
+      title: "사림의 원류",
+      scene: {
+        text: "학맥도가 흩어졌다. 정몽주로부터 이어진 사림의 계보를 차례대로 이어 ‘사림 영수’에 도달해야 한다.",
+      },
+      prompt: "정몽주로부터 시작하는 학맥 조각을 차례로 결합하라.",
+      config: {
+        inventory: [
+          { id: "jmj", icon: "📜", label: "정몽주" },
+          { id: "gj", icon: "📜", label: "길재" },
+          { id: "ksj", icon: "📜", label: "김숙자" },
+          { id: "kjj", icon: "📜", label: "김종직" },
+          { id: "nam", icon: "📜", label: "남은" },
+          { id: "nm", icon: "📜", label: "남명" },
+        ],
+        recipes: [
+          { a: "jmj", b: "gj", result: { id: "mg", icon: "📚", label: "정몽주-길재" } },
+          { a: "mg", b: "ksj", result: { id: "origin", icon: "📚", label: "사림 원류" } },
+          { a: "origin", b: "kjj", result: { id: "head", icon: "👑", label: "사림 영수 — 김종직" } },
+        ],
+        goal: "head",
+      },
+      solution: "head",
+      hints: [
+        "남은·남명은 학맥과 무관하다.",
+        "정몽주 → 길재 → 김숙자 → 김종직 순.",
+        "최종 결합은 김종직 조각과.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "갑자사화의 해",
+      scene: { text: "연산군 10년, 생모 폐비 윤씨의 일을 빌미로 두 번째 화가 벌어졌다." },
+      prompt: "갑자사화 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1504",
+      hints: ["16세기 초.", "1500년대.", "1504."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "갑자사화의 빌미",
+      scene: { text: "연산군은 성종의 한 후궁이자 자신의 생모였던 이의 죽음을 빌미로 대대적 숙청을 단행했다." },
+      prompt: "연산군이 갑자사화를 일으킨 명분이 된 인물은?",
+      config: {
+        options: [
+          { id: "yn", label: "폐비 윤씨", detail: "성종 계비, 성종에 의해 폐위·사사" },
+          { id: "fw", label: "문정왕후", detail: "명종 생모" },
+          { id: "sd", label: "사도세자", detail: "후대 인물" },
+          { id: "jh", label: "장희빈", detail: "숙종대 인물" },
+        ],
+      },
+      solution: "yn",
+      hints: ["성종의 후궁 출신 왕비.", "아들은 연산군.", "폐비 윤씨."],
+    },
+    {
+      mechanic: "sequence",
+      type: "history",
+      title: "사화의 차례",
+      scene: { text: "네 번의 사화가 연이어 일어났다. 순서대로 짚어야 문이 열린다." },
+      prompt: "조선 4대 사화를 일어난 순서대로 클릭하라.",
+      config: {
+        items: [
+          { id: "g", label: "기묘사화" },
+          { id: "c", label: "갑자사화" },
+          { id: "e", label: "을사사화" },
+          { id: "m", label: "무오사화" },
+        ],
+      },
+      solution: ["m", "c", "g", "e"],
+      hints: ["무오 → 갑자 → 기묘 → 을사.", "연산군 때 두 번, 중종·명종 각 한 번.", "무오-갑자-기묘-을사."],
+    },
+    {
+      mechanic: "match",
+      type: "history",
+      title: "사화와 희생자",
+      scene: { text: "네 개의 사화와 네 명의 대표 희생 인물. 짝이 맞지 않으면 문이 움직이지 않는다." },
+      prompt: "사화와 대표 희생 인물을 연결하라.",
+      config: {
+        left: [
+          { id: "m", label: "무오사화" },
+          { id: "c", label: "갑자사화" },
+          { id: "g", label: "기묘사화" },
+          { id: "e", label: "을사사화" },
+        ],
+        right: [
+          { id: "ki", label: "김일손" },
+          { id: "kg", label: "김굉필" },
+          { id: "jo", label: "조광조" },
+          { id: "yi", label: "윤임" },
+        ],
+        pairs: { m: "ki", c: "kg", g: "jo", e: "yi" },
+      },
+      solution: { m: "ki", c: "kg", g: "jo", e: "yi" },
+      hints: [
+        "무오사화의 사관 = 김일손.",
+        "기묘사화의 개혁가 = 조광조.",
+        "을사사화는 외척 대윤(윤임) 제거.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "기묘사화의 해",
+      scene: { text: "중종 14년, 개혁을 서두르던 조광조가 주살되었다." },
+      prompt: "기묘사화 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1519",
+      hints: ["16세기 초반.", "1510년대 후반.", "1519."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "소격서를 닫다",
+      scene: {
+        text: "조광조는 유교 원칙 아래 도교·민간 제사 기관을 폐지하고, 현량과를 신설하며 개혁을 몰아쳤다.",
+      },
+      prompt: "조광조가 폐지한, 하늘에 제사를 지내던 도교 기관은?",
+      config: {
+        options: [
+          { id: "sg", label: "소격서" },
+          { id: "sj", label: "사직서" },
+          { id: "gs", label: "관상감" },
+          { id: "jh", label: "전의감" },
+        ],
+      },
+      solution: "sg",
+      hints: ["별과 하늘에 제사 지냈던 기관.", "‘소격’은 ‘세속과 떨어지다’.", "소격서."],
+    },
+    {
+      mechanic: "hotspot",
+      type: "nonsense",
+      title: "나뭇잎의 글자",
+      scene: {
+        text:
+          "훈구는 조광조를 몰아내기 위해 궁궐 후원 나뭇잎에 꿀로 글자를 써 벌레에게 갉게 했다는 이야기가 전한다. 네 글자가 숨겨진 나뭇잎을 모두 찾아라.",
+      },
+      prompt: "글자 ‘走’, ‘肖’, ‘爲’, ‘王’가 새겨진 네 잎을 모두 골라라.",
+      config: {
+        items: [
+          { id: "a", icon: "🍃", label: "走" },
+          { id: "b", icon: "🍃", label: "天" },
+          { id: "c", icon: "🍃", label: "肖" },
+          { id: "d", icon: "🍃", label: "子" },
+          { id: "e", icon: "🍃", label: "爲" },
+          { id: "f", icon: "🍃", label: "立" },
+          { id: "g", icon: "🍃", label: "王" },
+          { id: "h", icon: "🍃", label: "生" },
+        ],
+        targets: ["a", "c", "e", "g"],
+      },
+      solution: ["a", "c", "e", "g"],
+      hints: [
+        "네 글자를 한 줄로 합치면 의미가 생긴다.",
+        "‘走’와 ‘肖’가 만나면 성씨 한 글자가 된다.",
+        "走·肖·爲·王 네 잎.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "nonsense",
+      title: "주초위왕",
+      scene: { text: "네 잎에서 떼어낸 글자를 올바른 순서로 합쳐 ‘주초위왕’ 문구를 복원하라." },
+      prompt: "글자 조각을 두 개씩 묶어 네 글자 문구를 완성하라.",
+      config: {
+        inventory: [
+          { id: "ju", icon: "🍃", label: "走" },
+          { id: "cho", icon: "🍃", label: "肖" },
+          { id: "wi", icon: "🍃", label: "爲" },
+          { id: "wang", icon: "🍃", label: "王" },
+          { id: "jeon", icon: "🍃", label: "田" },
+          { id: "sim", icon: "🍃", label: "心" },
+        ],
+        recipes: [
+          { a: "ju", b: "cho", result: { id: "jucho", icon: "📜", label: "‘走肖’ (조)" } },
+          { a: "wi", b: "wang", result: { id: "wiwang", icon: "📜", label: "‘爲王’ (위왕)" } },
+          {
+            a: "jucho",
+            b: "wiwang",
+            result: { id: "goal", icon: "🏮", label: "문구 ‘走肖爲王’" },
+          },
+        ],
+        goal: "goal",
+      },
+      solution: "goal",
+      hints: [
+        "‘田’·‘心’은 가짜 조각.",
+        "먼저 ‘走+肖’, ‘爲+王’ 두 쌍을 만들어라.",
+        "‘주초’ + ‘위왕’ = 주초위왕.",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "history",
+      title: "을사사화의 해",
+      scene: { text: "명종 즉위년. 외척 대윤과 소윤의 다툼 속에 네 번째 사화가 벌어졌다." },
+      prompt: "을사사화 연도를 4자리로 맞추어라.",
+      config: { digits: 4, symbols: "0123456789" },
+      solution: "1545",
+      hints: ["16세기 중반.", "1540년대.", "1545."],
+    },
+    {
+      mechanic: "match",
+      type: "history",
+      title: "사림의 학파",
+      scene: { text: "사화 이후 낙향한 사림은 서원을 세워 학파를 이루었다. 학파와 종장을 연결하라." },
+      prompt: "학파와 대표 학자를 연결하라.",
+      config: {
+        left: [
+          { id: "t", label: "퇴계 학파" },
+          { id: "y", label: "율곡 학파" },
+          { id: "nm", label: "남명 학파" },
+          { id: "hd", label: "화담 학파" },
+        ],
+        right: [
+          { id: "hwang", label: "이황" },
+          { id: "i", label: "이이" },
+          { id: "sik", label: "조식" },
+          { id: "dk", label: "서경덕" },
+        ],
+        pairs: { t: "hwang", y: "i", nm: "sik", hd: "dk" },
+      },
+      solution: { t: "hwang", y: "i", nm: "sik", hd: "dk" },
+      hints: [
+        "퇴계는 이황의 호.",
+        "율곡은 이이의 호.",
+        "남명=조식, 화담=서경덕.",
+      ],
+    },
+    {
+      mechanic: "arrange",
+      type: "history",
+      title: "사화 이후의 흐름",
+      scene: { text: "사화 이후 조정과 지방에서 일어난 흐름 다섯 단계." },
+      prompt: "사화 이후의 전개를 순서대로 배치하라.",
+      config: {
+        slots: 5,
+        items: [
+          { id: "c", label: "선조 즉위(1567)" },
+          { id: "a", label: "사림의 낙향" },
+          { id: "e", label: "동서 분당(1575)" },
+          { id: "b", label: "서원의 확산" },
+          { id: "d", label: "사림의 집권" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "낙향이 먼저, 분당이 가장 나중.",
+        "서원이 먼저 퍼졌고 그 후 선조 대 사림이 집권.",
+        "낙향 → 서원 → 선조 즉위 → 집권 → 동서 분당.",
+      ],
+    },
+    {
+      mechanic: "sequence",
+      type: "history",
+      title: "조광조의 행보",
+      scene: { text: "기묘명현 조광조가 중종 시대에 시행한 주요 개혁 네 가지를 실행 순서대로 짚어야 한다." },
+      prompt: "조광조의 개혁·사건을 시간 순으로 클릭하라.",
+      config: {
+        items: [
+          { id: "hy", label: "현량과 시행" },
+          { id: "ws", label: "위훈 삭제" },
+          { id: "sp", label: "소격서 폐지" },
+          { id: "ki", label: "기묘사화로 실각" },
+        ],
+      },
+      solution: ["sp", "hy", "ws", "ki"],
+      hints: [
+        "도교 기관 폐지가 가장 먼저.",
+        "현량과 → 위훈 삭제로 공신들의 반발을 샀다.",
+        "소격서 폐지 → 현량과 → 위훈삭제 → 실각.",
+      ],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "이조전랑의 자리",
+      scene: {
+        text: "선조 대, 한 작은 관직 자리를 둘러싸고 김효원·심의겸이 갈렸고, 사림은 동인과 서인으로 갈라졌다.",
+      },
+      prompt: "동서 분당의 직접 계기가 된 인사 요직은?",
+      config: {
+        options: [
+          { id: "jl", label: "이조전랑직" },
+          { id: "sg", label: "성균관 직" },
+          { id: "hm", label: "홍문관 직" },
+          { id: "yj", label: "예조판서 직" },
+        ],
+      },
+      solution: "jl",
+      hints: ["요직의 추천권을 가진 자리.", "‘전랑’은 인사 실무.", "이조전랑."],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "동인의 원류",
+      scene: { text: "여섯 학자 가운데 동인 계열의 원류를 모두 찾아라." },
+      prompt: "동인 계열 학자 셋을 모두 골라라.",
+      config: {
+        items: [
+          { id: "a", icon: "📜", label: "이황" },
+          { id: "b", icon: "📜", label: "이이" },
+          { id: "c", icon: "📜", label: "조식" },
+          { id: "d", icon: "📜", label: "성혼" },
+          { id: "e", icon: "📜", label: "서경덕" },
+          { id: "f", icon: "📜", label: "정철" },
+        ],
+        targets: ["a", "c", "e"],
+      },
+      solution: ["a", "c", "e"],
+      hints: [
+        "영남·화담 계열이 동인.",
+        "기호 계열(이이·성혼·정철)은 서인.",
+        "이황·조식·서경덕.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "선조 즉위의 해",
+      scene: { text: "사림이 본격적으로 정권을 잡기 시작한 왕의 즉위 해." },
+      prompt: "선조 즉위 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1567",
+      hints: ["16세기 후반.", "1560년대 후반.", "1567."],
+    },
+  ];
+
+  // =========================================================================
+  //  NORMAL · 2. 임진의 파도 (normal-imjin)
+  // =========================================================================
+  const NORMAL_IMJIN = [
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "파도가 밀려온다",
+      scene: {
+        text: "대한해협을 가르며 부산 앞바다에 왜선이 나타났다. 조선의 바다가 처음으로 불길에 휩싸인 해.",
+      },
+      prompt: "임진왜란 발발 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1592",
+      hints: ["16세기 말.", "1590년대 초.", "1592."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "적의 수장",
+      scene: { text: "일본을 통일하고 조선 정벌을 명령한 당시 일본의 실질적 최고 권력자." },
+      prompt: "임진왜란 당시 일본의 수장은?",
+      config: {
+        options: [
+          { id: "t", label: "도요토미 히데요시" },
+          { id: "d", label: "도쿠가와 이에야스" },
+          { id: "n", label: "오다 노부나가" },
+          { id: "k", label: "가토 기요마사" },
+        ],
+      },
+      solution: "t",
+      hints: ["‘관백’의 자리에 있던 인물.", "오다의 후계자.", "도요토미 히데요시."],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "이순신의 해전",
+      scene: { text: "여덟 전투가 흩어져 있다. 그중 이순신이 직접 이끈 해전을 모두 찾아라." },
+      prompt: "이순신의 해전을 모두 골라라 (4개).",
+      config: {
+        items: [
+          { id: "a", icon: "🌊", label: "옥포해전" },
+          { id: "b", icon: "🌊", label: "한산도대첩" },
+          { id: "c", icon: "🌊", label: "명량대첩" },
+          { id: "d", icon: "🌊", label: "노량해전" },
+          { id: "e", icon: "🏯", label: "행주대첩", note: "권율" },
+          { id: "f", icon: "🏯", label: "진주대첩", note: "김시민" },
+          { id: "g", icon: "🏯", label: "탄금대 전투", note: "신립" },
+          { id: "h", icon: "🏯", label: "벽제관 전투", note: "명군 중심" },
+        ],
+        targets: ["a", "b", "c", "d"],
+      },
+      solution: ["a", "b", "c", "d"],
+      hints: [
+        "해전(海戰)과 육전을 구분하라.",
+        "‘옥포·한산·명량·노량’은 모두 바다.",
+        "옥포·한산도·명량·노량.",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "history",
+      title: "명량의 해",
+      scene: { text: "13척으로 133척을 상대했다 전하는 그 해전의 연도." },
+      prompt: "명량대첩 연도를 4자리로 맞추어라.",
+      config: { digits: 4, symbols: "0123456789" },
+      solution: "1597",
+      hints: ["정유재란과 같은 해.", "1590년대 후반.", "1597."],
+    },
+    {
+      mechanic: "sequence",
+      type: "history",
+      title: "해전의 차례",
+      scene: { text: "이순신의 네 해전이 서로 다른 해에 있었다. 일어난 순서대로 짚어라." },
+      prompt: "해전을 시간 순으로 클릭하라.",
+      config: {
+        items: [
+          { id: "h", label: "한산도대첩" },
+          { id: "n", label: "노량해전" },
+          { id: "m", label: "명량대첩" },
+          { id: "o", label: "옥포해전" },
+        ],
+      },
+      solution: ["o", "h", "m", "n"],
+      hints: [
+        "임진왜란 초기 첫 승전 = 옥포(1592.5).",
+        "한산도 → 명량 → 노량.",
+        "옥포-한산도-명량-노량.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "거북선 복원",
+      scene: { text: "조선술 도면이 뜯겨 있다. 바른 순서로 조각을 결합해 거북선을 만들어라." },
+      prompt: "선체 재료와 장비 조각을 결합해 거북선을 완성하라.",
+      config: {
+        inventory: [
+          { id: "po", icon: "🛶", label: "판옥선 선체" },
+          { id: "ar", icon: "🔩", label: "철갑 지붕" },
+          { id: "yd", icon: "🐲", label: "용두(龍頭)" },
+          { id: "sp", icon: "🪵", label: "노송 돛대" },
+          { id: "dc", icon: "🏯", label: "탑옥 누각" },
+          { id: "fl", icon: "🏳", label: "깃발" },
+        ],
+        recipes: [
+          { a: "po", b: "ar", result: { id: "armored", icon: "⚙", label: "장갑선" } },
+          { a: "armored", b: "yd", result: { id: "turtle", icon: "🐢", label: "거북선" } },
+        ],
+        goal: "turtle",
+      },
+      solution: "turtle",
+      hints: [
+        "판옥선 + 철갑 = 장갑선.",
+        "‘용두’는 배의 앞머리 용 조각.",
+        "장갑선 + 용두 = 거북선.",
+      ],
+    },
+    {
+      mechanic: "match",
+      type: "history",
+      title: "장수와 전장",
+      scene: { text: "조선의 네 장수와 그들이 큰 공을 세운 전투를 짝지어라." },
+      prompt: "장수와 전투를 연결하라.",
+      config: {
+        left: [
+          { id: "ss", label: "이순신" },
+          { id: "kw", label: "권율" },
+          { id: "ks", label: "김시민" },
+          { id: "sl", label: "신립" },
+        ],
+        right: [
+          { id: "hs", label: "한산도대첩" },
+          { id: "hj", label: "행주대첩" },
+          { id: "jj", label: "진주대첩" },
+          { id: "tk", label: "탄금대 전투" },
+        ],
+        pairs: { ss: "hs", kw: "hj", ks: "jj", sl: "tk" },
+      },
+      solution: { ss: "hs", kw: "hj", ks: "jj", sl: "tk" },
+      hints: [
+        "신립은 충주 탄금대에서 패했다.",
+        "권율은 행주산성을 지켰다.",
+        "이순신-한산도, 권율-행주, 김시민-진주, 신립-탄금대.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "명량의 배",
+      scene: {
+        text: "‘상유십이(尙有十二)’ — 아직 12척의 배가 남아 있다, 이순신의 장계에 남은 수.",
+      },
+      prompt: "이순신이 명량에서 이끌었다고 전하는 전선의 수는?",
+      config: { length: 2 },
+      solution: "12",
+      hints: ["두 자리 숫자.", "열보다 크고 열다섯보다 작다.", "12."],
+    },
+    {
+      mechanic: "arrange",
+      type: "history",
+      title: "7년 전쟁의 지도",
+      scene: { text: "1592부터 1598까지, 전쟁의 주요 변곡점 다섯 장면이 흩어져 있다." },
+      prompt: "전쟁의 사건 5개를 연대 순으로 배치하라.",
+      config: {
+        slots: 5,
+        items: [
+          { id: "b", label: "한산도대첩 (1592.7)" },
+          { id: "a", label: "임진왜란 발발 (1592.4)" },
+          { id: "d", label: "정유재란 발발 (1597)" },
+          { id: "c", label: "행주대첩 (1593)" },
+          { id: "e", label: "노량해전·종전 (1598)" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "발발 → 해전 → 수도 탈환전 → 재침입 → 종전.",
+        "한산도(7월)는 발발(4월) 후.",
+        "발발 → 한산도 → 행주 → 정유재란 → 노량.",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "history",
+      title: "정유재란의 해",
+      scene: { text: "강화 협상이 결렬되자 일본은 다시 바다를 건넜다." },
+      prompt: "정유재란 연도를 4자리로 맞추어라.",
+      config: { digits: 4, symbols: "0123456789" },
+      solution: "1597",
+      hints: ["1590년대 후반.", "1596보다 뒤.", "1597."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "충무공의 시호",
+      scene: { text: "전사한 장군에게 후에 내려진 시호. ‘충성스럽고 무(武)에 밝다’는 뜻." },
+      prompt: "이순신의 시호는?",
+      config: {
+        options: [
+          { id: "cm", label: "충무공" },
+          { id: "ch", label: "충헌공" },
+          { id: "cs", label: "충정공" },
+          { id: "cw", label: "충열공" },
+        ],
+      },
+      solution: "cm",
+      hints: ["‘충(忠)+무(武)+공(公)’.", "같은 시호를 김시민·남이도 받았다.", "충무공."],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "명의 장수들",
+      scene: { text: "조선을 도우러 온 명의 장수와 다른 시대 인물이 섞여 있다. 명의 장수만 모두 찾아라." },
+      prompt: "임진·정유재란에 참전한 명의 장수 3명을 찾아라.",
+      config: {
+        items: [
+          { id: "a", icon: "🏮", label: "이여송" },
+          { id: "b", icon: "🏮", label: "낙상지" },
+          { id: "c", icon: "🏮", label: "마귀" },
+          { id: "d", icon: "🏯", label: "가토 기요마사", note: "일본" },
+          { id: "e", icon: "🏯", label: "고니시 유키나가", note: "일본" },
+          { id: "f", icon: "📜", label: "왕양명", note: "명 사상가·다른 시기" },
+          { id: "g", icon: "📜", label: "주원장", note: "명 태조·다른 시기" },
+          { id: "h", icon: "🏮", label: "진린", note: "명 수군 제독" },
+        ],
+        targets: ["a", "b", "c", "h"],
+      },
+      solution: ["a", "b", "c", "h"],
+      hints: [
+        "일본 장수는 제외한다.",
+        "‘진린’은 노량에서 이순신과 함께 싸웠다.",
+        "이여송·낙상지·마귀·진린.",
+      ],
+    },
+    {
+      mechanic: "sequence",
+      type: "history",
+      title: "장계의 순서",
+      scene: { text: "이순신이 조정에 올린 장계(보고서)의 내용이 흩어져 있다. 사건이 벌어진 순서대로 배치하라." },
+      prompt: "이순신 전투 관련 장계를 시간 순으로 클릭하라.",
+      config: {
+        items: [
+          { id: "h", label: "한산 앞바다에서 적을 크게 이겼다" },
+          { id: "m", label: "아직 신(臣)에겐 12척의 배가 있습니다" },
+          { id: "n", label: "관음포에서 큰 전투가 벌어졌다" },
+          { id: "o", label: "옥포에서 첫 승전을 알렸다" },
+        ],
+      },
+      solution: ["o", "h", "m", "n"],
+      hints: [
+        "첫 승전 = 옥포.",
+        "‘상유십이’는 명량 직전.",
+        "옥포 → 한산 → 명량 → 노량(관음포).",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "노량의 해",
+      scene: { text: "마지막 전투에서 이순신은 적탄에 쓰러졌고, 전쟁은 막을 내렸다." },
+      prompt: "노량해전 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1598",
+      hints: ["16세기 말.", "1590년대 마지막 해는 아니다.", "1598."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "전쟁의 끝",
+      scene: { text: "1598년, 일본군이 철수하면서 7년 전쟁이 끝났다. 결정적 계기가 된 사건은?" },
+      prompt: "임진·정유재란을 마무리 지은 주요 계기는?",
+      config: {
+        options: [
+          { id: "t", label: "도요토미 히데요시 사망" },
+          { id: "n", label: "이순신의 전사" },
+          { id: "c", label: "강화 협상 타결" },
+          { id: "m", label: "명군 대승" },
+        ],
+      },
+      solution: "t",
+      hints: [
+        "일본 쪽 최고 권력자의 죽음이 철수 명령을 내리게 했다.",
+        "1598년 8월의 일.",
+        "도요토미 히데요시 사망.",
+      ],
+    },
+    {
+      mechanic: "match",
+      type: "history",
+      title: "의병장의 지역",
+      scene: { text: "네 의병장이 각기 다른 지역에서 일어섰다. 지역과 연결하라." },
+      prompt: "의병장과 주 활동 지역을 연결하라.",
+      config: {
+        left: [
+          { id: "gjw", label: "곽재우" },
+          { id: "jh", label: "조헌" },
+          { id: "gm", label: "고경명" },
+          { id: "jmb", label: "정문부" },
+        ],
+        right: [
+          { id: "ur", label: "의령·경상" },
+          { id: "gs", label: "금산" },
+          { id: "dy", label: "담양·호남" },
+          { id: "hk", label: "함경" },
+        ],
+        pairs: { gjw: "ur", jh: "gs", gm: "dy", jmb: "hk" },
+      },
+      solution: { gjw: "ur", jh: "gs", gm: "dy", jmb: "hk" },
+      hints: [
+        "‘홍의 장군’ 곽재우는 경상 의령.",
+        "조헌·고경명은 호남·충청 중심.",
+        "정문부는 함경도에서 일어섰다.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "난중일기",
+      scene: { text: "책의 겉장이 두 쪽으로 갈라졌다. 올바른 두 조각을 맞추어 제목을 복원하라." },
+      prompt: "조각 두 개를 결합해 이순신의 일기를 복원하라.",
+      config: {
+        inventory: [
+          { id: "n", icon: "📕", label: "조각 “난중”" },
+          { id: "i", icon: "📕", label: "조각 “일기”" },
+          { id: "r", icon: "📕", label: "조각 “기록”" },
+          { id: "j", icon: "📕", label: "조각 “전서”" },
+        ],
+        recipes: [{ a: "n", b: "i", result: { id: "nj", icon: "📖", label: "완성된 “난중일기”" } }],
+        goal: "nj",
+      },
+      solution: "nj",
+      hints: ["제목은 네 글자.", "‘기록’·‘전서’는 디코이.", "난중 + 일기 = 난중일기."],
+    },
+    {
+      mechanic: "arrange",
+      type: "history",
+      title: "왕의 피난길",
+      scene: { text: "전쟁 초기, 선조의 피난 경로가 흐트러져 있다." },
+      prompt: "선조의 피난 경로를 순서대로 배치하라.",
+      config: {
+        slots: 5,
+        items: [
+          { id: "e", label: "한양 환도" },
+          { id: "a", label: "한양 출발" },
+          { id: "c", label: "평양 도착" },
+          { id: "d", label: "의주 도착" },
+          { id: "b", label: "개성 도착" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "한양을 떠나 북쪽으로 갔다.",
+        "개성 → 평양 → 의주.",
+        "한양 → 개성 → 평양 → 의주 → 환도.",
+      ],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "피난한 왕",
+      scene: { text: "전쟁 발발 직후 도성을 버리고 북으로 피난한 왕." },
+      prompt: "임진왜란 때 의주까지 피난 간 조선의 왕은?",
+      config: {
+        options: [
+          { id: "s", label: "선조" },
+          { id: "g", label: "광해군" },
+          { id: "i", label: "인조" },
+          { id: "m", label: "명종" },
+        ],
+      },
+      solution: "s",
+      hints: ["이순신을 발탁한 왕.", "14대 왕.", "선조."],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "전쟁의 비용",
+      scene: { text: "전쟁이 남긴 피해와 변화가 여러 카드로 나열되어 있다. 조선이 ‘직접적으로 겪은 피해’만 모두 골라라." },
+      prompt: "조선이 임진·정유재란으로 입은 직접적 피해를 모두 찾아라.",
+      config: {
+        items: [
+          { id: "a", icon: "🔥", label: "경복궁 소실" },
+          { id: "b", icon: "🔥", label: "도자기 장인 피납" },
+          { id: "c", icon: "🔥", label: "인구 급감" },
+          { id: "d", icon: "🏯", label: "명의 쇠퇴", note: "간접" },
+          { id: "e", icon: "🏯", label: "에도 막부 수립", note: "일본" },
+          { id: "f", icon: "🔥", label: "토지 대장 소실" },
+          { id: "g", icon: "📜", label: "실학의 태동", note: "먼 훗날" },
+        ],
+        targets: ["a", "b", "c", "f"],
+      },
+      solution: ["a", "b", "c", "f"],
+      hints: [
+        "‘직접적’이면 조선 땅·사람·문서 피해.",
+        "명의 쇠퇴·일본 막부 수립·실학은 간접 영향.",
+        "경복궁·도자기 장인·인구·토지 대장.",
       ],
     },
   ];
 
+  // =========================================================================
+  //  NORMAL · 3. 실학의 등불 (normal-silhak)
+  // =========================================================================
+  const NORMAL_SILHAK = [
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "정조 즉위",
+      scene: { text: "아버지 사도세자의 그늘을 안고, 한 왕이 새 시대를 열었다." },
+      prompt: "정조의 즉위 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1776",
+      hints: ["18세기 후반.", "미국 독립선언과 같은 해.", "1776."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "왕의 서재",
+      scene: {
+        text: "정조는 즉위와 함께 궁궐 안에 왕의 직속 학문·인사 기관을 설치해 인재를 길러냈다.",
+      },
+      prompt: "정조가 세운 왕의 직속 학문·인사 기관은?",
+      config: {
+        options: [
+          { id: "gg", label: "규장각" },
+          { id: "ji", label: "집현전" },
+          { id: "hm", label: "홍문관" },
+          { id: "sj", label: "승정원" },
+        ],
+      },
+      solution: "gg",
+      hints: ["‘규장(奎章)’은 제왕의 글.", "집현전은 세종 때 기관.", "규장각."],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "실학자들",
+      scene: { text: "여덟 명의 조선 학자 가운데 실학자 계보에 드는 이들을 모두 가려내라." },
+      prompt: "실학자로 꼽히는 네 사람을 모두 골라라.",
+      config: {
+        items: [
+          { id: "a", icon: "🎓", label: "정약용" },
+          { id: "b", icon: "🎓", label: "박지원" },
+          { id: "c", icon: "🎓", label: "홍대용" },
+          { id: "d", icon: "🎓", label: "박제가" },
+          { id: "e", icon: "📜", label: "이황", note: "16c 성리학" },
+          { id: "f", icon: "📜", label: "이이", note: "16c 성리학" },
+          { id: "g", icon: "📜", label: "송시열", note: "17c 노론" },
+          { id: "h", icon: "📜", label: "조광조", note: "16c 기묘명현" },
+        ],
+        targets: ["a", "b", "c", "d"],
+      },
+      solution: ["a", "b", "c", "d"],
+      hints: [
+        "실학은 18세기 학문 사조.",
+        "북학파와 경세치용 학파.",
+        "정약용·박지원·홍대용·박제가.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "거중기의 원리",
+      scene: { text: "도르래와 지렛대를 엮어 무거운 돌을 들어올리는 ‘거중기’를 복원하라." },
+      prompt: "부품 조각을 결합해 거중기를 완성하라.",
+      config: {
+        inventory: [
+          { id: "pl", icon: "⚙", label: "활차(도르래)" },
+          { id: "lv", icon: "⚙", label: "지렛대" },
+          { id: "ax", icon: "⚙", label: "축·톱니" },
+          { id: "dl", icon: "⛵", label: "돛" },
+          { id: "an", icon: "⚓", label: "닻" },
+        ],
+        recipes: [
+          { a: "pl", b: "lv", result: { id: "base", icon: "⚙", label: "도르래 부(部)" } },
+          { a: "base", b: "ax", result: { id: "gz", icon: "🏗", label: "거중기" } },
+        ],
+        goal: "gz",
+      },
+      solution: "gz",
+      hints: [
+        "돛·닻은 가짜 조각.",
+        "활차와 지렛대를 먼저 합쳐라.",
+        "활차+지렛대 → 부(部), 부+축 = 거중기.",
+      ],
+    },
+    {
+      mechanic: "match",
+      type: "history",
+      title: "실학자와 저서",
+      scene: { text: "네 실학자와 그들의 대표 저서가 섞여 있다. 짝을 맞추어야 서가가 닫힌다." },
+      prompt: "실학자와 대표 저서를 연결하라.",
+      config: {
+        left: [
+          { id: "jy", label: "정약용" },
+          { id: "jy2", label: "박지원" },
+          { id: "hd", label: "홍대용" },
+          { id: "bj", label: "박제가" },
+        ],
+        right: [
+          { id: "ms", label: "목민심서" },
+          { id: "yh", label: "열하일기" },
+          { id: "us", label: "의산문답" },
+          { id: "bh", label: "북학의" },
+        ],
+        pairs: { jy: "ms", jy2: "yh", hd: "us", bj: "bh" },
+      },
+      solution: { jy: "ms", jy2: "yh", hd: "us", bj: "bh" },
+      hints: [
+        "정약용 하면 ‘목민심서’.",
+        "박지원의 청나라 기행 = 열하일기.",
+        "홍대용-의산문답, 박제가-북학의.",
+      ],
+    },
+    {
+      mechanic: "sequence",
+      type: "common",
+      title: "거중기의 작동",
+      scene: { text: "무거운 돌을 들어올리는 거중기의 작동 과정 네 단계가 흐트러져 있다." },
+      prompt: "거중기의 작동 단계를 순서대로 클릭하라.",
+      config: {
+        items: [
+          { id: "a", label: "손잡이를 돌린다" },
+          { id: "c", label: "도르래가 회전한다" },
+          { id: "b", label: "톱니가 맞물린다" },
+          { id: "d", label: "돌이 천천히 올라간다" },
+        ],
+      },
+      solution: ["a", "b", "c", "d"],
+      hints: [
+        "가장 먼저 사람의 힘이 들어간다.",
+        "톱니가 맞물려야 회전이 생긴다.",
+        "손잡이 → 톱니 → 도르래 → 돌.",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "history",
+      title: "화성의 완공",
+      scene: { text: "정약용의 거중기·유형거가 동원되어 불과 2년 반 남짓에 거대한 성곽이 완성되었다." },
+      prompt: "수원 화성 완공 연도를 4자리로 맞추어라.",
+      config: { digits: 4, symbols: "0123456789" },
+      solution: "1796",
+      hints: ["18세기 말.", "정조 재위 중반.", "1796."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "정조의 친위군",
+      scene: { text: "정조는 왕권 강화를 위해 직속 친위 군영을 창설했다." },
+      prompt: "정조가 창설한 친위군의 이름은?",
+      config: {
+        options: [
+          { id: "jy", label: "장용영" },
+          { id: "hj", label: "훈련도감" },
+          { id: "bj", label: "별기군" },
+          { id: "yh", label: "용호영" },
+        ],
+      },
+      solution: "jy",
+      hints: [
+        "별기군은 개화기 부대.",
+        "훈련도감은 임진왜란 중 설치.",
+        "장용영.",
+      ],
+    },
+    {
+      mechanic: "arrange",
+      type: "history",
+      title: "정조의 개혁 연표",
+      scene: { text: "정조 재위 중 벌어진 주요 사건 다섯이 흐트러져 있다." },
+      prompt: "정조 대의 사건을 연대 순으로 배치하라.",
+      config: {
+        slots: 5,
+        items: [
+          { id: "e", label: "정조 승하 (1800)" },
+          { id: "a", label: "정조 즉위 (1776)" },
+          { id: "d", label: "수원 화성 완공 (1796)" },
+          { id: "b", label: "규장각 개혁 정비 (1781)" },
+          { id: "c", label: "장용영 창설 (1785)" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "즉위가 가장 먼저, 승하가 가장 나중.",
+        "규장각 정비 → 장용영 → 화성.",
+        "1776 → 1781 → 1785 → 1796 → 1800.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "강진의 세월",
+      scene: { text: "정약용이 천주교 박해(신유박해)의 여파로 전라도 강진에 유배된 해." },
+      prompt: "정약용이 강진에 유배된 해를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1801",
+      hints: ["19세기 첫 해.", "순조 즉위 이듬해.", "1801."],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "정약용의 삼부작",
+      scene: { text: "여덟 권의 책 이름 가운데 정약용이 직접 지은 ‘경세 삼부작’을 모두 골라라." },
+      prompt: "정약용의 경세 삼부작을 모두 찾아라 (3권).",
+      config: {
+        items: [
+          { id: "a", icon: "📚", label: "목민심서" },
+          { id: "b", icon: "📚", label: "경세유표" },
+          { id: "c", icon: "📚", label: "흠흠신서" },
+          { id: "d", icon: "📚", label: "북학의", note: "박제가" },
+          { id: "e", icon: "📚", label: "열하일기", note: "박지원" },
+          { id: "f", icon: "📚", label: "성호사설", note: "이익" },
+          { id: "g", icon: "📚", label: "동의보감", note: "허준" },
+          { id: "h", icon: "📚", label: "해동농서", note: "서호수" },
+        ],
+        targets: ["a", "b", "c"],
+      },
+      solution: ["a", "b", "c"],
+      hints: [
+        "‘목민’·‘경세’·‘흠흠’이 들어가는 세 책.",
+        "목민심서·경세유표·흠흠신서.",
+        "위 세 권이 정답.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "화성의 장비",
+      scene: { text: "성곽 공사에 쓰인 장비들. 두 장비 조각을 묶어 ‘화성 공사 장비 일체’를 완성하라." },
+      prompt: "조각 두 개를 결합해 수원 화성 축성의 상징 장비 세트를 완성하라.",
+      config: {
+        inventory: [
+          { id: "gz", icon: "🏗", label: "거중기" },
+          { id: "yg", icon: "🛞", label: "유형거" },
+          { id: "nr", icon: "⚙", label: "녹로" },
+          { id: "jn", icon: "🪓", label: "도끼" },
+          { id: "jg", icon: "🪚", label: "톱" },
+        ],
+        recipes: [
+          { a: "gz", b: "yg", result: { id: "set", icon: "🏛", label: "화성 공사 장비 일체" } },
+        ],
+        goal: "set",
+      },
+      solution: "set",
+      hints: ["도끼·톱은 보조 도구.", "녹로는 거중기의 기반.", "거중기 + 유형거 = 장비 일체."],
+    },
+    {
+      mechanic: "sequence",
+      type: "history",
+      title: "수원 화성 축성",
+      scene: { text: "화성을 쌓는 과정이 네 단계로 나뉘어 있다." },
+      prompt: "수원 화성 축성 과정을 순서대로 클릭하라.",
+      config: {
+        items: [
+          { id: "b", label: "돌·벽돌 운반(유형거)" },
+          { id: "a", label: "정약용의 거중기 설계" },
+          { id: "c", label: "성벽·누각 축조" },
+          { id: "d", label: "완공 및 정조 행차" },
+        ],
+      },
+      solution: ["a", "b", "c", "d"],
+      hints: [
+        "먼저 장비를 설계한다.",
+        "운반 → 축조 → 완공.",
+        "설계 → 운반 → 축조 → 완공.",
+      ],
+    },
+    {
+      mechanic: "select",
+      type: "common",
+      title: "양반전의 작가",
+      scene: { text: "‘양반을 사고판다’는 풍자 소설로 신분제의 허위를 꼬집은 북학파 학자." },
+      prompt: "《양반전》의 저자는?",
+      config: {
+        options: [
+          { id: "p", label: "박지원" },
+          { id: "c", label: "이이" },
+          { id: "s", label: "서경덕" },
+          { id: "k", label: "김만중" },
+        ],
+      },
+      solution: "p",
+      hints: [
+        "《열하일기》의 저자이기도 하다.",
+        "호는 ‘연암’.",
+        "박지원.",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "history",
+      title: "열하의 길",
+      scene: { text: "청 건륭제 70수연 사절단을 따라, 한 학자는 4개월의 기행을 기록으로 남겼다." },
+      prompt: "박지원이 《열하일기》를 쓴 해를 4자리로 맞추어라.",
+      config: { digits: 4, symbols: "0123456789" },
+      solution: "1780",
+      hints: ["18세기 말.", "1780년대 초입.", "1780."],
+    },
+    {
+      mechanic: "match",
+      type: "common",
+      title: "북학파의 관심",
+      scene: { text: "세 학자가 청에서 서로 다른 분야를 배워 돌아왔다." },
+      prompt: "북학파 학자와 관심 분야를 연결하라.",
+      config: {
+        left: [
+          { id: "p", label: "박지원" },
+          { id: "h", label: "홍대용" },
+          { id: "b", label: "박제가" },
+        ],
+        right: [
+          { id: "so", label: "풍자·소설과 문학" },
+          { id: "jj", label: "지전설과 우주관" },
+          { id: "ss", label: "상공업 진흥" },
+        ],
+        pairs: { p: "so", h: "jj", b: "ss" },
+      },
+      solution: { p: "so", h: "jj", b: "ss" },
+      hints: [
+        "《호질》은 박지원의 풍자.",
+        "홍대용은 땅이 돈다 했다.",
+        "박제가는 《북학의》에서 수레와 배를 강조.",
+      ],
+    },
+    {
+      mechanic: "hotspot",
+      type: "common",
+      title: "조선 후기의 발명품",
+      scene: { text: "여러 발명품·기구가 늘어서 있다. 조선 후기 실학 시대의 발명에 해당하는 것을 모두 고르라." },
+      prompt: "조선 후기 실학 시기의 장비·발명품을 모두 찾아라.",
+      config: {
+        items: [
+          { id: "a", icon: "🏗", label: "거중기" },
+          { id: "b", icon: "🛞", label: "유형거" },
+          { id: "c", icon: "⚙", label: "녹로" },
+          { id: "d", icon: "☔", label: "측우기", note: "세종 때" },
+          { id: "e", icon: "☀", label: "앙부일구", note: "세종 때" },
+          { id: "f", icon: "🌀", label: "혼천의", note: "송이영 등 조선 후기 재제작이 있으나 기원은 이전" },
+          { id: "g", icon: "⚒", label: "자격루", note: "세종 때" },
+        ],
+        targets: ["a", "b", "c"],
+      },
+      solution: ["a", "b", "c"],
+      hints: [
+        "세종 때 것은 제외한다.",
+        "화성 축성에 쓰인 것들.",
+        "거중기·유형거·녹로.",
+      ],
+    },
+    {
+      mechanic: "arrange",
+      type: "history",
+      title: "실학 저서의 간행 순서",
+      scene: { text: "다섯 권의 실학 저서가 차례를 잃었다. 간행 순서대로 배치하라." },
+      prompt: "저서를 간행된 순서대로 배치하라.",
+      config: {
+        slots: 5,
+        items: [
+          { id: "c", label: "북학의 (1778)" },
+          { id: "a", label: "성호사설 (18c 전반)" },
+          { id: "b", label: "의산문답 (1773)" },
+          { id: "d", label: "열하일기 (1780)" },
+          { id: "e", label: "목민심서 (1818)" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "가장 이른 것은 이익의 《성호사설》.",
+        "1773 → 1778 → 1780.",
+        "목민심서(1818)가 가장 나중.",
+      ],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "화성 축성의 지휘",
+      scene: { text: "정조의 친필로 시작된 화성 공사의 실무 설계·기획을 맡은 인물." },
+      prompt: "수원 화성의 설계 전반을 맡은 실학자는?",
+      config: {
+        options: [
+          { id: "jy", label: "정약용" },
+          { id: "p", label: "박지원" },
+          { id: "b", label: "박제가" },
+          { id: "h", label: "홍대용" },
+        ],
+      },
+      solution: "jy",
+      hints: [
+        "‘다산’이라는 호.",
+        "거중기의 설계자.",
+        "정약용.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "정조의 승하",
+      scene: { text: "개혁의 대왕이 갑작스럽게 세상을 떠났다. 그의 사후 19세기는 세도 정치의 시대로 흘렀다." },
+      prompt: "정조의 승하 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1800",
+      hints: ["19세기의 문턱.", "1800년대의 첫 해.", "1800."],
+    },
+  ];
+
+  // =========================================================================
+  //  HARD · 1. 연호의 비밀 (hard-chronicle)
+  // =========================================================================
+  const HARD_CHRONICLE = [
+    {
+      mechanic: "dial",
+      type: "common",
+      title: "임(壬)의 자리",
+      scene: {
+        text:
+          "10간(干)이 새겨진 낡은 다이얼. 임진왜란의 ‘임(壬)’이 간의 어느 자리에 있는지 짚어야 한다.",
+        items: [{ icon: "📜", label: "10간 순서", note: "甲乙丙丁戊己庚辛壬癸" }],
+      },
+      prompt: "다이얼을 돌려 10간 중 ‘壬’에 맞춰라.",
+      config: { digits: 1, wheelSymbols: [GAN] },
+      solution: "壬",
+      hints: [
+        "‘갑’에서 아홉 번째.",
+        "甲乙丙丁戊己庚辛 다음.",
+        "壬.",
+      ],
+    },
+    {
+      mechanic: "select",
+      type: "math",
+      title: "임진년의 다음",
+      scene: { text: "간지는 60년에 한 번씩 돌아온다. 1592 임진년 다음 임진년은 언제일까?" },
+      prompt: "1592년 이후 가장 가까운 임진년의 서기는?",
+      config: {
+        options: [
+          { id: "a", label: "1632" },
+          { id: "b", label: "1652" },
+          { id: "c", label: "1672" },
+          { id: "d", label: "1702" },
+        ],
+      },
+      solution: "b",
+      hints: ["60년 주기.", "1592 + 60.", "1652."],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "명의 연호",
+      scene: { text: "조선이 오래 써 온 명나라 연호가 네 조각으로 부서져 있다." },
+      prompt: "조각을 결합해 명 말의 연호를 복원하라.",
+      config: {
+        inventory: [
+          { id: "ho", icon: "🧩", label: "洪" },
+          { id: "mu", icon: "🧩", label: "武" },
+          { id: "so", icon: "🧩", label: "崇" },
+          { id: "jeong", icon: "🧩", label: "禎" },
+          { id: "gn", icon: "🧩", label: "建" },
+          { id: "yg", icon: "🧩", label: "陽" },
+        ],
+        recipes: [
+          { a: "ho", b: "mu", result: { id: "hm", icon: "📜", label: "洪武 (명 태조)" } },
+          { a: "so", b: "jeong", result: { id: "sj", icon: "📜", label: "崇禎 (명 말)" } },
+        ],
+        goal: "sj",
+      },
+      solution: "sj",
+      hints: [
+        "조선이 명 말까지 그 연호를 ‘숭정 기원’으로 남겼다.",
+        "崇+禎.",
+        "崇禎.",
+      ],
+    },
+    {
+      mechanic: "match",
+      type: "math",
+      title: "서기와 간지",
+      scene: { text: "네 해의 서기와 그에 해당하는 간지를 짝지어라." },
+      prompt: "서기 연도와 간지를 연결하라.",
+      config: {
+        left: [
+          { id: "a", label: "1592" },
+          { id: "b", label: "1636" },
+          { id: "c", label: "1811" },
+          { id: "d", label: "1894" },
+        ],
+        right: [
+          { id: "ij", label: "임진(壬辰)" },
+          { id: "bj", label: "병자(丙子)" },
+          { id: "sm", label: "신미(辛未)" },
+          { id: "go", label: "갑오(甲午)" },
+        ],
+        pairs: { a: "ij", b: "bj", c: "sm", d: "go" },
+      },
+      solution: { a: "ij", b: "bj", c: "sm", d: "go" },
+      hints: [
+        "1592는 임진왜란.",
+        "1894는 갑오개혁.",
+        "1636-병자, 1811-신미.",
+      ],
+    },
+    {
+      mechanic: "hotspot",
+      type: "common",
+      title: "조선의 자주 연호",
+      scene: {
+        text: "여러 연호가 섞여 있다. ‘조선이 스스로 쓴 자주 연호’가 아닌 것들을 모두 가려내라.",
+      },
+      prompt: "조선의 자주 연호가 아닌 것들을 모두 찾아라.",
+      config: {
+        items: [
+          { id: "a", icon: "🏷", label: "개국(開國)", note: "1894~" },
+          { id: "b", icon: "🏷", label: "건양(建陽)", note: "1896~" },
+          { id: "c", icon: "🏷", label: "광무(光武)", note: "1897~" },
+          { id: "d", icon: "🏷", label: "융희(隆熙)", note: "1907~" },
+          { id: "e", icon: "🏷", label: "홍무(洪武)", note: "명 연호" },
+          { id: "f", icon: "🏷", label: "순치(順治)", note: "청 연호" },
+          { id: "g", icon: "🏷", label: "영락(永樂)", note: "명 연호" },
+        ],
+        targets: ["e", "f", "g"],
+      },
+      solution: ["e", "f", "g"],
+      hints: [
+        "명·청 연호는 중국 것이다.",
+        "건양·광무·융희는 대한제국 주변의 자주 연호.",
+        "홍무·순치·영락은 제외.",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "common",
+      title: "말(午)의 자리",
+      scene: { text: "12지(支)가 새겨진 다이얼. ‘말’에 해당하는 지지(地支)를 찾아라." },
+      prompt: "다이얼을 돌려 12지 중 ‘말(馬)’의 지지 한 글자에 맞춰라.",
+      config: { digits: 1, wheelSymbols: [JI] },
+      solution: "午",
+      hints: ["‘자축인묘진사오미신유술해’.", "일곱 번째 지지.", "午."],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "병자년의 해",
+      scene: { text: "청 태종의 군대가 한강을 건너 남한산성을 포위했다." },
+      prompt: "병자호란 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1636",
+      hints: ["17세기 전반.", "인조 재위 중.", "1636."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "황제의 연호",
+      scene: { text: "고종은 대한제국을 선포하며 스스로 황제가 되었고, 새 연호를 내렸다." },
+      prompt: "대한제국 수립과 함께 선포된 연호는?",
+      config: {
+        options: [
+          { id: "gu", label: "광무(光武)" },
+          { id: "gy", label: "건양(建陽)" },
+          { id: "yh", label: "융희(隆熙)" },
+          { id: "ok", label: "개국(開國)" },
+        ],
+      },
+      solution: "gu",
+      hints: [
+        "1897년의 일.",
+        "건양(建陽)에서 다음 연호로.",
+        "광무.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "정약용의 한자",
+      scene: { text: "한 실학자의 한자 이름이 세 조각으로 나뉘어 있다." },
+      prompt: "조각을 결합해 실학자의 이름 세 글자를 완성하라.",
+      config: {
+        inventory: [
+          { id: "jeong", icon: "🧩", label: "丁" },
+          { id: "yak", icon: "🧩", label: "若" },
+          { id: "yong", icon: "🧩", label: "鏞" },
+          { id: "pak", icon: "🧩", label: "朴" },
+          { id: "ji", icon: "🧩", label: "趾" },
+          { id: "won", icon: "🧩", label: "源" },
+        ],
+        recipes: [
+          { a: "jeong", b: "yak", result: { id: "jy", icon: "📜", label: "丁若" } },
+          { a: "jy", b: "yong", result: { id: "jyy", icon: "📜", label: "丁若鏞 (정약용)" } },
+        ],
+        goal: "jyy",
+      },
+      solution: "jyy",
+      hints: [
+        "朴·趾·源은 ‘박지원’의 조각.",
+        "丁+若를 먼저 묶어라.",
+        "丁若 + 鏞 = 丁若鏞.",
+      ],
+    },
+    {
+      mechanic: "sequence",
+      type: "common",
+      title: "지지(支)의 짝수",
+      scene: { text: "12지에서 짝수 순번만 골라 여섯 글자가 흩어져 있다." },
+      prompt: "짝수 순번 지지 여섯 글자를 순서대로 클릭하라.",
+      config: {
+        items: [
+          { id: "a", label: "子" },
+          { id: "c", label: "辰" },
+          { id: "b", label: "寅" },
+          { id: "e", label: "申" },
+          { id: "d", label: "午" },
+          { id: "f", label: "戌" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e", "f"],
+      hints: [
+        "1·3·5·7·9·11번째.",
+        "자·인·진·오·신·술.",
+        "子→寅→辰→午→申→戌.",
+      ],
+    },
+    {
+      mechanic: "arrange",
+      type: "common",
+      title: "간지만 보고 연대 짚기",
+      scene: { text: "다섯 연도의 간지만 걸려 있다. 서기 오래된 순으로 배열해야 한다." },
+      prompt: "간지를 서기 연도 오래된 순으로 배치하라.",
+      config: {
+        slots: 5,
+        items: [
+          { id: "d", label: "甲午 (1894)" },
+          { id: "a", label: "壬辰 (1592)" },
+          { id: "b", label: "丙子 (1636)" },
+          { id: "c", label: "辛未 (1811)" },
+          { id: "e", label: "庚戌 (1910)" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "임진왜란이 가장 오래됐다.",
+        "병자호란 → 홍경래.",
+        "1592 → 1636 → 1811 → 1894 → 1910.",
+      ],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "임진왜란의 한자",
+      scene: { text: "임진왜란을 상징하는 한자어를 모두 가려내라." },
+      prompt: "임진왜란과 직접 관련된 한자어를 모두 찾아라 (6개).",
+      config: {
+        items: [
+          { id: "a", icon: "🏮", label: "壬辰" },
+          { id: "b", icon: "🏮", label: "倭亂" },
+          { id: "c", icon: "🏮", label: "宣祖" },
+          { id: "d", icon: "🏮", label: "忠武" },
+          { id: "e", icon: "🏮", label: "龜船" },
+          { id: "f", icon: "🏮", label: "義兵" },
+          { id: "g", icon: "🏮", label: "己卯", note: "기묘사화" },
+          { id: "h", icon: "🏮", label: "丙子", note: "병자호란" },
+          { id: "i", icon: "🏮", label: "仁祖", note: "병자호란 왕" },
+        ],
+        targets: ["a", "b", "c", "d", "e", "f"],
+      },
+      solution: ["a", "b", "c", "d", "e", "f"],
+      hints: [
+        "‘己卯’·‘丙子’·‘仁祖’는 다른 사건.",
+        "간지 壬辰과 직접 엮인 것만.",
+        "壬辰·倭亂·宣祖·忠武·龜船·義兵.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "정묘호란의 해",
+      scene: { text: "병자호란에 앞서 후금이 처음 침입한 해." },
+      prompt: "정묘호란 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1627",
+      hints: ["17세기 전반.", "병자호란(1636)보다 9년 전.", "1627."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "사도세자의 한자",
+      scene: { text: "1762년, 영조는 한 세자를 뒤주에 가두어 죽게 했다. 그 사건의 한자 표기." },
+      prompt: "사도세자가 뒤주에서 세상을 떠난 사건의 한자 이름은?",
+      config: {
+        options: [
+          { id: "a", label: "壬午禍變" },
+          { id: "b", label: "庚辰禍變" },
+          { id: "c", label: "戊申禍變" },
+          { id: "d", label: "甲戌獄" },
+        ],
+      },
+      solution: "a",
+      hints: ["1762년의 간지는 임오.", "‘壬午’가 들어간다.", "壬午禍變."],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "동의보감",
+      scene: { text: "의서의 제목 네 글자가 낱자로 흩어졌다." },
+      prompt: "한자 조각을 결합해 허준의 의서 제목을 완성하라.",
+      config: {
+        inventory: [
+          { id: "dong", icon: "🧩", label: "東" },
+          { id: "ui", icon: "🧩", label: "醫" },
+          { id: "bo", icon: "🧩", label: "寶" },
+          { id: "gam", icon: "🧩", label: "鑑" },
+          { id: "jo", icon: "🧩", label: "朝" },
+          { id: "sun", icon: "🧩", label: "鮮" },
+        ],
+        recipes: [
+          { a: "dong", b: "ui", result: { id: "du", icon: "📜", label: "東醫" } },
+          { a: "bo", b: "gam", result: { id: "bg", icon: "📜", label: "寶鑑" } },
+          { a: "du", b: "bg", result: { id: "dubg", icon: "📚", label: "東醫寶鑑" } },
+        ],
+        goal: "dubg",
+      },
+      solution: "dubg",
+      hints: [
+        "‘朝’·‘鮮’은 가짜 조각.",
+        "두 글자씩 두 쌍을 먼저 만들어라.",
+        "東醫 + 寶鑑 = 東醫寶鑑.",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "common",
+      title: "간지의 자물쇠 — 병자",
+      scene: {
+        text: "두 개의 바퀴가 달린 자물쇠. 왼쪽은 10간, 오른쪽은 12지. 병자호란의 ‘병자’를 맞춰라.",
+      },
+      prompt: "다이얼을 돌려 ‘丙子’에 맞추어라.",
+      config: { digits: 2, wheelSymbols: [GAN, JI] },
+      solution: "丙子",
+      hints: [
+        "10간에서 ‘丙’.",
+        "12지에서 ‘子’.",
+        "丙子.",
+      ],
+    },
+    {
+      mechanic: "select",
+      type: "math",
+      title: "개국 기년",
+      scene: {
+        text: "갑오개혁은 태조 즉위(1392)를 원년으로 삼는 ‘개국 기년’을 공식화했다. 갑오년은 개국 몇 년인가?",
+      },
+      prompt: "1894년은 개국 기년으로 몇 년인가?",
+      config: {
+        options: [
+          { id: "a", label: "502" },
+          { id: "b", label: "503" },
+          { id: "c", label: "504" },
+          { id: "d", label: "505" },
+        ],
+      },
+      solution: "b",
+      hints: [
+        "1894 − 1392 + 1.",
+        "503.",
+        "정답은 503.",
+      ],
+    },
+    {
+      mechanic: "arrange",
+      type: "common",
+      title: "연호의 연대기",
+      scene: { text: "명·청의 연호 다섯이 흩어져 있다. 시대 순으로 배치하라." },
+      prompt: "연호를 시대 순으로 배치하라.",
+      config: {
+        slots: 5,
+        items: [
+          { id: "c", label: "崇禎 (1628~)" },
+          { id: "a", label: "洪武 (1368~)" },
+          { id: "b", label: "永樂 (1403~)" },
+          { id: "d", label: "順治 (1644~)" },
+          { id: "e", label: "康熙 (1662~)" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "명이 먼저, 청이 나중.",
+        "홍무 → 영락 → 숭정.",
+        "이어서 순치 → 강희.",
+      ],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "묘호가 아닌 것",
+      scene: { text: "한자 네 글자가 여러 개 걸려 있다. ‘조선 왕의 묘호(廟號)’가 아닌 것들을 모두 가려내라." },
+      prompt: "조선 왕의 묘호가 아닌 것들을 모두 찾아라 (4개).",
+      config: {
+        items: [
+          { id: "a", icon: "🏛", label: "太祖" },
+          { id: "b", icon: "🏛", label: "世宗" },
+          { id: "c", icon: "🏛", label: "宣祖" },
+          { id: "d", icon: "🏛", label: "英祖" },
+          { id: "e", icon: "🏷", label: "洪武", note: "명 연호" },
+          { id: "f", icon: "🏷", label: "順治", note: "청 연호" },
+          { id: "g", icon: "🏷", label: "永樂", note: "명 연호" },
+          { id: "h", icon: "🏷", label: "建陽", note: "대한제국 연호" },
+        ],
+        targets: ["e", "f", "g", "h"],
+      },
+      solution: ["e", "f", "g", "h"],
+      hints: [
+        "묘호는 죽은 뒤 붙는 왕의 칭호.",
+        "연호와 묘호를 구분한다.",
+        "洪武·順治·永樂·建陽.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "math",
+      title: "갑오의 해",
+      scene: { text: "갑오년에 일어난 큰 개혁. 간지 ‘갑오’를 서기로 바꾸어 입력하라." },
+      prompt: "‘갑오개혁’의 연도(4자리)를 입력하라.",
+      config: { length: 4 },
+      solution: "1894",
+      hints: ["19세기 말.", "청일전쟁과 같은 해.", "1894."],
+    },
+  ];
+
+  // =========================================================================
+  //  HARD · 2. 환국과 사변 (hard-rebellion)
+  // =========================================================================
+  const HARD_REBELLION = [
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "기해예송",
+      scene: { text: "효종이 승하했다. 복상 기간을 두고 서인과 남인이 정면으로 부딪쳤다." },
+      prompt: "1차 예송(기해예송)이 벌어진 해를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1659",
+      hints: ["17세기 중반.", "효종 승하 직후.", "1659."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "서인의 주장",
+      scene: {
+        text: "효종을 둘째 아들로 볼 것인가, 왕통을 이은 장자로 볼 것인가 — 복상 기간이 그 답이었다.",
+      },
+      prompt: "1차 예송에서 서인이 주장한 효종 복상 기간은?",
+      config: {
+        options: [
+          { id: "a", label: "1년(기년)" },
+          { id: "b", label: "3년" },
+          { id: "c", label: "9개월" },
+          { id: "d", label: "3개월" },
+        ],
+      },
+      solution: "a",
+      hints: [
+        "서인은 효종을 둘째로 보았다.",
+        "둘째의 경우 1년.",
+        "1년(기년).",
+      ],
+    },
+    {
+      mechanic: "match",
+      type: "history",
+      title: "당과 성향",
+      scene: { text: "붕당과 그 성향을 짝지어라." },
+      prompt: "붕당과 성향을 연결하라.",
+      config: {
+        left: [
+          { id: "s", label: "서인" },
+          { id: "n", label: "남인" },
+          { id: "no", label: "노론" },
+          { id: "so", label: "소론" },
+        ],
+        right: [
+          { id: "ki", label: "기년설(1년)" },
+          { id: "sy", label: "삼년설" },
+          { id: "gg", label: "강경파(송시열 계)" },
+          { id: "og", label: "온건파(윤증 계)" },
+        ],
+        pairs: { s: "ki", n: "sy", no: "gg", so: "og" },
+      },
+      solution: { s: "ki", n: "sy", no: "gg", so: "og" },
+      hints: [
+        "서인=기년, 남인=삼년.",
+        "송시열 계는 강경파 = 노론.",
+        "윤증의 소론은 온건파.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "기사환국의 한자",
+      scene: { text: "자물쇠 명패가 네 조각으로 부서졌다." },
+      prompt: "한자 조각을 결합해 ‘기사환국’ 네 글자를 복원하라.",
+      config: {
+        inventory: [
+          { id: "gi", icon: "🧩", label: "己" },
+          { id: "sa", icon: "🧩", label: "巳" },
+          { id: "hwan", icon: "🧩", label: "換" },
+          { id: "guk", icon: "🧩", label: "局" },
+          { id: "gap", icon: "🧩", label: "甲" },
+          { id: "sul", icon: "🧩", label: "戌" },
+        ],
+        recipes: [
+          { a: "gi", b: "sa", result: { id: "gs", icon: "📜", label: "己巳" } },
+          { a: "hwan", b: "guk", result: { id: "hg", icon: "📜", label: "換局" } },
+          { a: "gs", b: "hg", result: { id: "goal", icon: "📚", label: "己巳換局" } },
+        ],
+        goal: "goal",
+      },
+      solution: "goal",
+      hints: [
+        "甲·戌은 ‘갑술환국’의 조각.",
+        "己+巳, 換+局을 먼저 짝지어라.",
+        "己巳 + 換局 = 己巳換局.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "기사환국의 해",
+      scene: { text: "숙종은 희빈 장씨의 소생을 세자로 책봉했고, 이에 반대한 서인은 무너졌다." },
+      prompt: "기사환국의 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1689",
+      hints: ["17세기 말.", "경신환국(1680) 아홉 해 뒤.", "1689."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "기사년의 희생",
+      scene: { text: "기사환국으로 남인이 집권하자 서인의 거두가 제주에서 사사되었다." },
+      prompt: "기사환국으로 사사된 서인의 영수는?",
+      config: {
+        options: [
+          { id: "so", label: "송시열" },
+          { id: "yh", label: "윤휴" },
+          { id: "hm", label: "허목" },
+          { id: "jo", label: "조광조" },
+        ],
+      },
+      solution: "so",
+      hints: ["우암(尤庵)이라 불렸다.", "‘노론의 종장’ 격.", "송시열."],
+    },
+    {
+      mechanic: "sequence",
+      type: "history",
+      title: "숙종의 환국",
+      scene: { text: "숙종 재위 중 정권이 세 번이나 크게 갈렸다." },
+      prompt: "3대 환국을 일어난 순서대로 클릭하라.",
+      config: {
+        items: [
+          { id: "gi", label: "기사환국" },
+          { id: "ga", label: "갑술환국" },
+          { id: "gy", label: "경신환국" },
+        ],
+      },
+      solution: ["gy", "gi", "ga"],
+      hints: [
+        "1680 → 1689 → 1694.",
+        "경신 → 기사 → 갑술.",
+        "위 순서.",
+      ],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "붕당의 쟁점",
+      scene: { text: "남인과 서인(노론)이 대립한 주요 쟁점 카드 속에, 붕당과 무관한 것이 섞여 있다." },
+      prompt: "붕당 대립의 실제 쟁점이었던 것을 모두 찾아라 (3개).",
+      config: {
+        items: [
+          { id: "a", icon: "📜", label: "왕실 복상 기간" },
+          { id: "b", icon: "📜", label: "세자 책봉 문제" },
+          { id: "c", icon: "📜", label: "장희빈과 인현왕후" },
+          { id: "d", icon: "📜", label: "거중기 도입", note: "18c 후반" },
+          { id: "e", icon: "📜", label: "단발령 시행", note: "19c 말" },
+          { id: "f", icon: "📜", label: "토지 조사 사업", note: "20c" },
+        ],
+        targets: ["a", "b", "c"],
+      },
+      solution: ["a", "b", "c"],
+      hints: [
+        "시대는 17세기 말~18세기 초.",
+        "예송, 세자 책봉, 인현왕후 폐위가 핵심.",
+        "세 가지.",
+      ],
+    },
+    {
+      mechanic: "match",
+      type: "history",
+      title: "환국과 수혜",
+      scene: { text: "세 환국이 어느 쪽에 유리하게 끝났는지 짝지어라." },
+      prompt: "환국과 정권을 잡은 쪽을 연결하라.",
+      config: {
+        left: [
+          { id: "gy", label: "경신환국" },
+          { id: "gi", label: "기사환국" },
+          { id: "ga", label: "갑술환국" },
+        ],
+        right: [
+          { id: "so1", label: "서인 우세" },
+          { id: "na", label: "남인 우세" },
+          { id: "so2", label: "서인 재집권" },
+        ],
+        pairs: { gy: "so1", gi: "na", ga: "so2" },
+      },
+      solution: { gy: "so1", gi: "na", ga: "so2" },
+      hints: [
+        "경신은 서인, 기사는 남인.",
+        "갑술은 서인이 다시 돌아왔다.",
+        "경신-서인, 기사-남인, 갑술-서인.",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "history",
+      title: "무신난의 해",
+      scene: { text: "영조 즉위 직후, 이인좌가 소론·남인 일부와 함께 일으킨 반란." },
+      prompt: "무신난(이인좌의 난) 연도를 4자리로 맞추어라.",
+      config: { digits: 4, symbols: "0123456789" },
+      solution: "1728",
+      hints: ["18세기 초.", "1720년대 후반.", "1728."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "영조의 탕평",
+      scene: { text: "환국을 지켜본 영조는 ‘탕평(蕩平)’으로 당쟁을 다스렸다." },
+      prompt: "영조가 탕평책으로 균형을 맞추려 한 두 붕당은?",
+      config: {
+        options: [
+          { id: "ns", label: "노론과 소론" },
+          { id: "ds", label: "동인과 서인" },
+          { id: "nb", label: "남인과 북인" },
+          { id: "hs", label: "훈구와 사림" },
+        ],
+      },
+      solution: "ns",
+      hints: [
+        "영조 시대 주류 붕당 두 쌍.",
+        "서인에서 갈린 두 갈래.",
+        "노론·소론.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "임오화변",
+      scene: { text: "1762년의 큰 변고. 한자 네 글자가 흩어져 있다." },
+      prompt: "한자 조각을 결합해 ‘○○禍變’을 완성하라.",
+      config: {
+        inventory: [
+          { id: "im", icon: "🧩", label: "壬" },
+          { id: "o", icon: "🧩", label: "午" },
+          { id: "hwa", icon: "🧩", label: "禍" },
+          { id: "byun", icon: "🧩", label: "變" },
+          { id: "mu", icon: "🧩", label: "戊" },
+          { id: "sin", icon: "🧩", label: "申" },
+        ],
+        recipes: [
+          { a: "im", b: "o", result: { id: "io", icon: "📜", label: "壬午" } },
+          { a: "hwa", b: "byun", result: { id: "hb", icon: "📜", label: "禍變" } },
+          { a: "io", b: "hb", result: { id: "goal", icon: "📚", label: "壬午禍變" } },
+        ],
+        goal: "goal",
+      },
+      solution: "goal",
+      hints: [
+        "戊·申은 무신난의 조각.",
+        "壬+午, 禍+變을 먼저.",
+        "壬午 + 禍變.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "임오화변의 해",
+      scene: { text: "영조가 세자 이선을 뒤주에 가두어 8일 만에 세상을 떠나게 한 해." },
+      prompt: "임오화변 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1762",
+      hints: ["18세기 중반.", "1760년대 초.", "1762."],
+    },
+    {
+      mechanic: "arrange",
+      type: "history",
+      title: "당쟁의 연표",
+      scene: { text: "17~18세기 주요 사건 다섯이 흐트러져 있다." },
+      prompt: "사건을 연대 순으로 배치하라.",
+      config: {
+        slots: 5,
+        items: [
+          { id: "c", label: "갑술환국 (1694)" },
+          { id: "a", label: "기해예송 (1659)" },
+          { id: "b", label: "경신환국 (1680)" },
+          { id: "d", label: "무신난 (1728)" },
+          { id: "e", label: "임오화변 (1762)" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "예송 → 환국.",
+        "경신 → 갑술 → 무신 → 임오.",
+        "1659 → 1680 → 1694 → 1728 → 1762.",
+      ],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "평안도의 봉기",
+      scene: { text: "1811년, 평안도 차별에 분노한 이들이 군사를 일으켰다." },
+      prompt: "1811년 평안도 농민·지식인 봉기를 이끈 인물은?",
+      config: {
+        options: [
+          { id: "hg", label: "홍경래" },
+          { id: "ij", label: "이인좌" },
+          { id: "jb", label: "전봉준" },
+          { id: "ig", label: "임꺽정" },
+        ],
+      },
+      solution: "hg",
+      hints: [
+        "‘평서 대원수’라 자처.",
+        "가산·정주를 점령했다.",
+        "홍경래.",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "common",
+      title: "홍경래의 간지",
+      scene: { text: "두 바퀴 자물쇠. 1811년의 간지를 맞춰라." },
+      prompt: "다이얼을 돌려 ‘辛未’에 맞추어라.",
+      config: { digits: 2, wheelSymbols: [GAN, JI] },
+      solution: "辛未",
+      hints: [
+        "‘신미양요’의 신미와 같은 간지.",
+        "10간에서 ‘辛’, 12지에서 ‘未’.",
+        "辛未.",
+      ],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "19세기 민란",
+      scene: { text: "조선 후기 민중 봉기·사건이 섞여 있다. 19세기에 일어난 민란만 모두 가려내라." },
+      prompt: "19세기의 민란·농민운동을 모두 찾아라 (3개).",
+      config: {
+        items: [
+          { id: "a", icon: "🔥", label: "홍경래의 난 (1811)" },
+          { id: "b", icon: "🔥", label: "임술농민봉기 (1862)" },
+          { id: "c", icon: "🔥", label: "동학농민운동 (1894)" },
+          { id: "d", icon: "🛡", label: "이괄의 난 (1624)", note: "17c" },
+          { id: "e", icon: "🛡", label: "이인좌의 난 (1728)", note: "18c" },
+          { id: "f", icon: "🛡", label: "무오사화 (1498)", note: "15c" },
+        ],
+        targets: ["a", "b", "c"],
+      },
+      solution: ["a", "b", "c"],
+      hints: [
+        "17·18·15세기는 제외.",
+        "1811·1862·1894.",
+        "홍경래·임술·동학.",
+      ],
+    },
+    {
+      mechanic: "match",
+      type: "history",
+      title: "붕당의 영수",
+      scene: { text: "네 붕당과 대표 인물을 짝지어라." },
+      prompt: "붕당과 대표 인물을 연결하라.",
+      config: {
+        left: [
+          { id: "s", label: "서인" },
+          { id: "n", label: "남인" },
+          { id: "no", label: "노론" },
+          { id: "so", label: "소론" },
+        ],
+        right: [
+          { id: "ss", label: "송시열" },
+          { id: "hm", label: "허목" },
+          { id: "mj", label: "민진원" },
+          { id: "yj", label: "윤증" },
+        ],
+        pairs: { s: "ss", n: "hm", no: "mj", so: "yj" },
+      },
+      solution: { s: "ss", n: "hm", no: "mj", so: "yj" },
+      hints: [
+        "송시열은 노론의 종장이지만 서인 시절 영수이기도.",
+        "허목은 남인.",
+        "소론의 윤증, 노론의 민진원.",
+      ],
+    },
+    {
+      mechanic: "sequence",
+      type: "history",
+      title: "예송에서 탕평까지",
+      scene: { text: "당쟁의 중요 이정표 다섯 개. 시간 순서대로 짚어야 한다." },
+      prompt: "다음 사건을 순서대로 클릭하라.",
+      config: {
+        items: [
+          { id: "b", label: "경신환국" },
+          { id: "a", label: "기해예송" },
+          { id: "d", label: "갑술환국" },
+          { id: "c", label: "기사환국" },
+          { id: "e", label: "영조 탕평책 개시" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "예송이 가장 먼저, 탕평이 가장 나중.",
+        "경신-기사-갑술.",
+        "예송 → 경신 → 기사 → 갑술 → 탕평.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "탕평의 시작",
+      scene: { text: "환국의 반복을 뒤로하고 탕평의 시대가 열렸다." },
+      prompt: "영조의 즉위 연도(탕평책 본격 시행의 분기점)를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1724",
+      hints: ["18세기 초.", "1720년대 중반.", "1724."],
+    },
+  ];
+
+  // =========================================================================
+  //  HARD · 3. 조선의 그림자 (hard-latemerge)
+  // =========================================================================
+  const HARD_LATEMERGE = [
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "강화의 문",
+      scene: { text: "운요호 사건이 빌미가 되어, 조선은 일본과 처음으로 근대적 조약을 맺었다." },
+      prompt: "강화도조약이 체결된 해를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1876",
+      hints: ["19세기 후반.", "1870년대 중반.", "1876."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "조약의 본명",
+      scene: { text: "‘강화도조약’은 흔한 이름이고, 외교 문서에는 다른 이름으로 남았다." },
+      prompt: "강화도조약의 정식 명칭은?",
+      config: {
+        options: [
+          { id: "a", label: "조일수호조규" },
+          { id: "b", label: "강화수호조약" },
+          { id: "c", label: "조미수호통상조약" },
+          { id: "d", label: "조청상민수륙무역장정" },
+        ],
+      },
+      solution: "a",
+      hints: [
+        "‘조일(朝日)’로 시작한다.",
+        "‘수호조규(修好條規)’.",
+        "조일수호조규.",
+      ],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "열린 항구",
+      scene: { text: "강화도조약으로 개방된 3개 항구와, 훗날 열린 항구들이 섞여 있다." },
+      prompt: "강화도조약으로 개항된 3개 항구를 모두 찾아라.",
+      config: {
+        items: [
+          { id: "a", icon: "⚓", label: "부산" },
+          { id: "b", icon: "⚓", label: "원산" },
+          { id: "c", icon: "⚓", label: "인천" },
+          { id: "d", icon: "⚓", label: "목포", note: "1897 개항" },
+          { id: "e", icon: "⚓", label: "군산", note: "1899 개항" },
+          { id: "f", icon: "⚓", label: "진주", note: "내륙" },
+        ],
+        targets: ["a", "b", "c"],
+      },
+      solution: ["a", "b", "c"],
+      hints: [
+        "부산은 가장 먼저.",
+        "원산(1880)·인천(1883)은 조약에 따라 이어 개항.",
+        "부산·원산·인천.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "개화기의 이름",
+      scene: { text: "사건 이름이 조각나 있다. 세 쌍이 제짝을 찾으면 하나의 정변을 복원할 수 있다." },
+      prompt: "조각을 결합해 ‘갑신정변’을 복원하라.",
+      config: {
+        inventory: [
+          { id: "gs", icon: "🧩", label: "갑신" },
+          { id: "jb", icon: "🧩", label: "정변" },
+          { id: "go", icon: "🧩", label: "갑오" },
+          { id: "ge", icon: "🧩", label: "개혁" },
+          { id: "em", icon: "🧩", label: "을미" },
+          { id: "sb", icon: "🧩", label: "사변" },
+        ],
+        recipes: [
+          { a: "gs", b: "jb", result: { id: "goal", icon: "📚", label: "갑신정변" } },
+          { a: "go", b: "ge", result: { id: "gog", icon: "📚", label: "갑오개혁" } },
+          { a: "em", b: "sb", result: { id: "ems", icon: "📚", label: "을미사변" } },
+        ],
+        goal: "goal",
+      },
+      solution: "goal",
+      hints: [
+        "세 쌍을 모두 만들 수 있지만 목표는 하나.",
+        "‘갑신’과 ‘정변’.",
+        "갑신 + 정변 = 갑신정변.",
+      ],
+    },
+    {
+      mechanic: "sequence",
+      type: "history",
+      title: "개화기의 파도",
+      scene: { text: "개항 이후 20년, 다섯 파도가 연달아 몰려왔다." },
+      prompt: "개화기 주요 사건을 연대 순으로 클릭하라.",
+      config: {
+        items: [
+          { id: "c", label: "갑신정변" },
+          { id: "a", label: "강화도조약" },
+          { id: "d", label: "동학농민운동" },
+          { id: "b", label: "임오군란" },
+          { id: "e", label: "청일전쟁" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "강화도조약(1876)이 가장 먼저.",
+        "임오군란(1882) → 갑신정변(1884).",
+        "동학(1894) → 청일전쟁(1894~95).",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "history",
+      title: "갑신의 해",
+      scene: { text: "김옥균·박영효 등이 일본의 힘을 빌려 정권을 잡으려 한 3일 천하." },
+      prompt: "갑신정변 연도를 4자리로 맞추어라.",
+      config: { digits: 4, symbols: "0123456789" },
+      solution: "1884",
+      hints: ["1880년대 중반.", "임오군란 2년 뒤.", "1884."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "개화 삼걸이 아닌 이",
+      scene: { text: "갑신정변의 주역은 ‘개화 삼걸’로 불린다. 그중 한 명이 아닌 사람이 섞여 있다." },
+      prompt: "갑신정변 주역(개화 삼걸) 중 한 명이 아닌 인물은?",
+      config: {
+        options: [
+          { id: "k", label: "김옥균" },
+          { id: "p", label: "박영효" },
+          { id: "h", label: "홍영식" },
+          { id: "c", label: "최익현" },
+        ],
+      },
+      solution: "c",
+      hints: [
+        "최익현은 위정척사의 대표.",
+        "세 사람은 모두 개화파.",
+        "최익현.",
+      ],
+    },
+    {
+      mechanic: "match",
+      type: "history",
+      title: "인물과 사건",
+      scene: { text: "개화기 네 인물과 그들의 상징 사건을 짝지어야 문이 열린다." },
+      prompt: "인물과 관련 사건을 연결하라.",
+      config: {
+        left: [
+          { id: "k", label: "김옥균" },
+          { id: "j", label: "전봉준" },
+          { id: "c", label: "최익현" },
+          { id: "m", label: "민영환" },
+        ],
+        right: [
+          { id: "gs", label: "갑신정변 주도" },
+          { id: "dh", label: "동학농민운동 지도" },
+          { id: "ws", label: "위정척사 상소" },
+          { id: "jg", label: "을사조약 항의 자결" },
+        ],
+        pairs: { k: "gs", j: "dh", c: "ws", m: "jg" },
+      },
+      solution: { k: "gs", j: "dh", c: "ws", m: "jg" },
+      hints: [
+        "전봉준은 ‘녹두장군’.",
+        "민영환은 1905년 자결.",
+        "김옥균-갑신, 최익현-위정척사.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "갑오의 해",
+      scene: { text: "동학의 횃불, 갑오개혁, 청일전쟁 — 한 해에 격랑이 겹쳤다." },
+      prompt: "동학농민운동·갑오개혁의 해를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1894",
+      hints: ["19세기 말.", "갑오년.", "1894."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "동학의 지도자",
+      scene: { text: "동학의 교주는 계보가 있고, 실제 농민군을 이끈 지도자는 따로 있다." },
+      prompt: "동학의 교주가 아니라 농민군의 지도자였던 인물은?",
+      config: {
+        options: [
+          { id: "jb", label: "전봉준" },
+          { id: "cj", label: "최제우", detail: "1대 교주" },
+          { id: "cs", label: "최시형", detail: "2대 교주" },
+          { id: "sbh", label: "손병희", detail: "3대 교주" },
+        ],
+      },
+      solution: "jb",
+      hints: [
+        "‘녹두장군’이라 불렸다.",
+        "교주는 세 사람 모두.",
+        "전봉준.",
+      ],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "갑오개혁의 조치",
+      scene: { text: "여러 조치 중 1894년 갑오개혁에 해당하는 것을 모두 찾아라. (단발령·음력 폐지는 이듬해 을미개혁)" },
+      prompt: "1894년 갑오개혁의 조치를 모두 골라라 (4개).",
+      config: {
+        items: [
+          { id: "a", icon: "📜", label: "신분제 폐지" },
+          { id: "b", icon: "📜", label: "과거제 폐지" },
+          { id: "c", icon: "📜", label: "조혼 금지" },
+          { id: "d", icon: "📜", label: "공사노비법 혁파(노비 해방)" },
+          { id: "e", icon: "✂", label: "단발령", note: "을미개혁" },
+          { id: "f", icon: "📅", label: "태양력 사용", note: "을미개혁" },
+          { id: "g", icon: "🏭", label: "회사령 공포", note: "20c 일제" },
+        ],
+        targets: ["a", "b", "c", "d"],
+      },
+      solution: ["a", "b", "c", "d"],
+      hints: [
+        "단발령·태양력은 을미개혁.",
+        "회사령은 1910년대.",
+        "신분제·과거제·조혼·노비.",
+      ],
+    },
+    {
+      mechanic: "combine",
+      type: "common",
+      title: "대한제국의 연호",
+      scene: { text: "한자 여섯 글자로 세 개의 연호가 흩어져 있다. 황제의 해 ‘광무’를 복원하라." },
+      prompt: "조각을 결합해 대한제국 수립 때의 연호를 만들어라.",
+      config: {
+        inventory: [
+          { id: "ge", icon: "🧩", label: "建" },
+          { id: "yg", icon: "🧩", label: "陽" },
+          { id: "gw", icon: "🧩", label: "光" },
+          { id: "mu", icon: "🧩", label: "武" },
+          { id: "yh", icon: "🧩", label: "隆" },
+          { id: "hi", icon: "🧩", label: "熙" },
+        ],
+        recipes: [
+          { a: "ge", b: "yg", result: { id: "gy", icon: "📜", label: "建陽 (1896~)" } },
+          { a: "gw", b: "mu", result: { id: "goal", icon: "📜", label: "光武 (1897~)" } },
+          { a: "yh", b: "hi", result: { id: "yh2", icon: "📜", label: "隆熙 (1907~)" } },
+        ],
+        goal: "goal",
+      },
+      solution: "goal",
+      hints: [
+        "세 연호 모두 두 글자씩.",
+        "목표는 대한제국 선포 때의 연호.",
+        "光 + 武 = 光武.",
+      ],
+    },
+    {
+      mechanic: "dial",
+      type: "common",
+      title: "경술의 간지",
+      scene: { text: "1910년의 간지. 두 바퀴 자물쇠로 ‘경술’을 맞춰라." },
+      prompt: "다이얼을 돌려 ‘庚戌’에 맞추어라.",
+      config: { digits: 2, wheelSymbols: [GAN, JI] },
+      solution: "庚戌",
+      hints: [
+        "10간의 일곱 번째 ‘庚’.",
+        "12지에서 ‘戌(개)’.",
+        "庚戌.",
+      ],
+    },
+    {
+      mechanic: "keypad",
+      type: "history",
+      title: "경술국치의 해",
+      scene: { text: "한일병합조약이 체결되어 대한제국의 주권이 일본에 넘어간 해." },
+      prompt: "경술국치의 연도를 4자리로 입력하라.",
+      config: { length: 4 },
+      solution: "1910",
+      hints: ["20세기의 첫 10년 끝.", "1910년대의 첫 해.", "1910."],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "을사의 결과",
+      scene: { text: "1905년 체결된 을사조약은 조선의 어떤 권리를 박탈했는가?" },
+      prompt: "을사조약의 핵심 결과는?",
+      config: {
+        options: [
+          { id: "a", label: "외교권 박탈" },
+          { id: "b", label: "군대 해산" },
+          { id: "c", label: "토지 조사 개시" },
+          { id: "d", label: "단발령 실시" },
+        ],
+      },
+      solution: "a",
+      hints: [
+        "1905년의 일.",
+        "통감부 설치와 이어진다.",
+        "외교권 박탈.",
+      ],
+    },
+    {
+      mechanic: "sequence",
+      type: "history",
+      title: "고종의 시대",
+      scene: { text: "고종 재위 중반에서 대한제국 선포까지 다섯 사건." },
+      prompt: "다음 사건을 연대 순으로 클릭하라.",
+      config: {
+        items: [
+          { id: "c", label: "갑신정변" },
+          { id: "a", label: "임오군란" },
+          { id: "d", label: "동학농민운동" },
+          { id: "b", label: "갑오개혁" },
+          { id: "e", label: "대한제국 선포" },
+        ],
+      },
+      solution: ["a", "c", "d", "b", "e"],
+      hints: [
+        "임오(1882) → 갑신(1884) → 동학(1894.1~).",
+        "갑오개혁은 1894.7 이후.",
+        "임오 → 갑신 → 동학 → 갑오개혁 → 대한제국(1897).",
+      ],
+    },
+    {
+      mechanic: "arrange",
+      type: "history",
+      title: "조약의 연대기",
+      scene: { text: "조선·대한제국이 맺은 다섯 조약이 흩어져 있다." },
+      prompt: "조약을 연대 순으로 배치하라.",
+      config: {
+        slots: 5,
+        items: [
+          { id: "c", label: "을사조약 (1905)" },
+          { id: "a", label: "강화도조약 (1876)" },
+          { id: "b", label: "조미수호통상조약 (1882)" },
+          { id: "d", label: "정미7조약 (1907)" },
+          { id: "e", label: "한일병합조약 (1910)" },
+        ],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "강화도 → 조미수호 → 을사 → 정미 → 경술.",
+        "1876 → 1882 → 1905 → 1907 → 1910.",
+        "위 순서.",
+      ],
+    },
+    {
+      mechanic: "match",
+      type: "history",
+      title: "인물의 최후",
+      scene: { text: "네 사람이 각기 다른 방식으로 시대의 끝을 마주했다." },
+      prompt: "인물과 최후를 연결하라.",
+      config: {
+        left: [
+          { id: "k", label: "김옥균" },
+          { id: "an", label: "안중근" },
+          { id: "j", label: "전봉준" },
+          { id: "m", label: "민영환" },
+        ],
+        right: [
+          { id: "sh", label: "상해에서 피살" },
+          { id: "hb", label: "하얼빈 의거" },
+          { id: "ch", label: "체포 후 처형" },
+          { id: "jg", label: "자결(乙巳)" },
+        ],
+        pairs: { k: "sh", an: "hb", j: "ch", m: "jg" },
+      },
+      solution: { k: "sh", an: "hb", j: "ch", m: "jg" },
+      hints: [
+        "안중근은 이토 히로부미를 하얼빈에서.",
+        "김옥균은 1894년 상해에서.",
+        "전봉준-처형, 민영환-자결.",
+      ],
+    },
+    {
+      mechanic: "select",
+      type: "history",
+      title: "아관으로 향한 왕",
+      scene: { text: "을미사변 이후 고종은 신변의 위협을 피해 러시아 공사관으로 피신했다." },
+      prompt: "1896년 고종의 러시아 공사관 피신 사건의 이름은?",
+      config: {
+        options: [
+          { id: "ak", label: "아관파천" },
+          { id: "em", label: "을미사변" },
+          { id: "io", label: "임오군란" },
+          { id: "gs", label: "갑신정변" },
+        ],
+      },
+      solution: "ak",
+      hints: [
+        "‘아관(俄館)’은 러시아 공사관.",
+        "1896년의 일.",
+        "아관파천.",
+      ],
+    },
+    {
+      mechanic: "hotspot",
+      type: "history",
+      title: "을사오적",
+      scene: { text: "을사조약에 찬성한 ‘오적(五賊)’ 다섯과, 그와는 다른 처지에 있던 인물들이 섞여 있다." },
+      prompt: "을사오적 5인을 모두 골라라.",
+      config: {
+        items: [
+          { id: "a", icon: "🏛", label: "이완용" },
+          { id: "b", icon: "🏛", label: "이지용" },
+          { id: "c", icon: "🏛", label: "이근택" },
+          { id: "d", icon: "🏛", label: "박제순" },
+          { id: "e", icon: "🏛", label: "권중현" },
+          { id: "f", icon: "🕊", label: "민영환", note: "자결로 항의" },
+          { id: "g", icon: "🕊", label: "안중근", note: "의거" },
+          { id: "h", icon: "🏯", label: "이토 히로부미", note: "조약 강요 주체" },
+        ],
+        targets: ["a", "b", "c", "d", "e"],
+      },
+      solution: ["a", "b", "c", "d", "e"],
+      hints: [
+        "‘이○○’으로 시작하는 세 사람이 있다.",
+        "박제순·권중현도 포함.",
+        "이완용·이지용·이근택·박제순·권중현.",
+      ],
+    },
+  ];
+
+  // =========================================================================
+  //  Export
+  // =========================================================================
   const EASY_GAMES = [
     {
       id: "easy-goryeo",
@@ -661,14 +2988,54 @@
     },
   ];
 
-  const DATA = {
+  const NORMAL_GAMES = [
+    {
+      id: "normal-sajo",
+      title: "사화의 시대",
+      tagline: "훈구와 사림, 네 번의 화(禍) · 20관문",
+      stages: NORMAL_SAJO,
+    },
+    {
+      id: "normal-imjin",
+      title: "임진의 파도",
+      tagline: "7년의 전쟁, 바다의 영웅 · 20관문",
+      stages: NORMAL_IMJIN,
+    },
+    {
+      id: "normal-silhak",
+      title: "실학의 등불",
+      tagline: "정조와 거중기, 새로운 학문 · 20관문",
+      stages: NORMAL_SILHAK,
+    },
+  ];
+
+  const HARD_GAMES = [
+    {
+      id: "hard-chronicle",
+      title: "연호의 비밀",
+      tagline: "간지·연호·한자 사료의 방 · 20관문",
+      stages: HARD_CHRONICLE,
+    },
+    {
+      id: "hard-rebellion",
+      title: "환국과 사변",
+      tagline: "예송·환국·사변·민란의 방 · 20관문",
+      stages: HARD_REBELLION,
+    },
+    {
+      id: "hard-latemerge",
+      title: "조선의 그림자",
+      tagline: "개화에서 경술국치까지 · 20관문",
+      stages: HARD_LATEMERGE,
+    },
+  ];
+
+  global.ESCAPE_DATA = {
     DIFFICULTY,
     GAMES: {
       easy: EASY_GAMES,
-      normal: [],
-      hard: [],
+      normal: NORMAL_GAMES,
+      hard: HARD_GAMES,
     },
   };
-
-  global.ESCAPE_DATA = DATA;
 })(window);

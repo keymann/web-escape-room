@@ -5,6 +5,12 @@ const KNOWN_GAMES = new Set([
   "easy-goryeo",
   "easy-joseon",
   "easy-hanyang",
+  "normal-sajo",
+  "normal-imjin",
+  "normal-silhak",
+  "hard-chronicle",
+  "hard-rebellion",
+  "hard-latemerge",
 ]);
 const MAX_STORED = 100;
 const MAX_RETURNED = 50;
